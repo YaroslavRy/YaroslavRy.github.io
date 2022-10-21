@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
+        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <img id="image" style="display: none;" src="">
+        <canvas id="canvas"></canvas>
+        <script src="game.js" style="background-color:blueviolet"></script>
+
+        <div class="controls">
+            <label for="fontSlider">
+                Number of cells
+            </label>
+            <input id="fontSlider" type="range" name="points" value="15" min="1" max="100" step="1" />
+            <input type="text" value="" id="value" />
+            <p>
+                <label for="cells_slider">
+                    Number of cells
+                </label>
+                <input id="cells_slider" type="range" value="15" min="1" max="100" step="1" />
+                <input type="text" value="" id="value_cells" />
+
+            </p>
+
+
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var Values = $("#fontSlider").val();
+            $("#value").val(Values);
+            $("#fontSlider").change(
+                function () {
+                    var Values = $("#fontSlider").val();
+                    $("#value").val(Values);
+                }
+            );
+
+
+            var cellsValue = $("#cells_slider").val();
+            $("#value_cells").val(cellsValue);
+            $("#cells_slider").change(
+                function () {
+                    var cellsValue = $("#cells_slider").val();
+                    $("#value_cells").val(cellsValue);
+                }
+            );
+        });
+
+
+    </script>
+
+</body>
+
+</html>
