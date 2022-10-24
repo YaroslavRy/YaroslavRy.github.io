@@ -12,8 +12,8 @@ $(async function () {
     const canvas = document.getElementById('canvas');
     var ctx = canvas.getContext("2d");
     ctx.font = "6px monospace";
-    width = canvas.width = 1000;
-    canvas.height = 1000;
+    width = canvas.width = 500;
+    canvas.height = 500;
 
     ctx.fillStyle = "#3f2855";
     ctx.fillRect(0, 0, canvas.width, canvas.height);

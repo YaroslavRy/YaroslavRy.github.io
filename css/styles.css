@@ -8,6 +8,7 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  background-color: #3f2855;
 }
 
 .footer {
@@ -59,4 +60,8 @@ https://colorswall.com/palette/4968
   justify-content: space-between;
   width: 60%;
   margin: .5rem;
+}
+
+.controls{
+  width: 25%;
 }
