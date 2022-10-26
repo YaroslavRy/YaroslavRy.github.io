@@ -9,6 +9,7 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
   background-color: #3f2855;
+  color: #BAA2B7;
 }
 
 .footer {
@@ -21,6 +22,7 @@ body {
   /* Vertically center the text there */
   background: #222745;
 }
+
 
 
 /* Custom page CSS
@@ -41,11 +43,11 @@ code {
 }
 
 .navbar {
-  background-color: #752075;
+  background-color: #61295A;
 }
 
 .footer a {
-  color: #317bec;
+  color: #5E2D6B;
 }
 
 
@@ -62,6 +64,6 @@ https://colorswall.com/palette/4968
   margin: .5rem;
 }
 
-.controls{
+.controls {
   width: 25%;
 }
