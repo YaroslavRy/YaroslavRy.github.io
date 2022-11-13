@@ -19,27 +19,28 @@ $(async function () {
     const canvas = document.getElementById('canvas');
     var ctx = canvas.getContext("2d");
     const width = (canvas.width = window.innerWidth / 1.5);
-    const height = (canvas.height = window.innerHeight / 1.5);
+    const height = (canvas.height = window.innerHeight / 6);
 
     canvas.addEventListener('click', function (event) { console.log(getMousePos(canvas, event)); }, false);
 
 
     function loop() {
-        let alpha = getRandomInt(100) / 100;
-        ctx.fillStyle = `rgba(41, 42, 97, ${alpha})`;
+        let alpha = 0.3; 
+        ctx.fillStyle = `rgba(72, 46, 97, ${alpha})`;
         ctx.fillRect(0, 0, width, height);
 
         let cellSize = 10;
-        let step = 10;
+        let step = 11;
         let n = parseInt(width / cellSize);
 
         ctx.fillStyle = "#BAA2B7";
         let opacity = getRandomInt(100) / 100;
-        ctx.fillStyle = `rgba(176, 111, 237, ${opacity})`;
+        ctx.fillStyle = `rgba(44, 28, 59, ${opacity})`;
         let text = "Work in progress . . .";
-        ctx.font = "3em serif";
-        ctx.textAlign = 'center';
-        ctx.fillText(`${text}`, width / 2, height / 2);
+        ctx.font = "3em ubuntu";
+        ctx.textAlign = 'center'; 
+        let rndShift = getRandomInt(10);
+        ctx.fillText(`${text}`, width / 2 + rndShift, height / 2 + rndShift);
 
         for (var j = 0; j < n; j++) {
             for (var i = 0; i < n; i++) {
