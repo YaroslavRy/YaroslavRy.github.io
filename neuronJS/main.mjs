@@ -26,6 +26,8 @@ class Neuron {
     this.color = this.isInhib ? 'red' : 'blue';
     this.minThreshold = 0.05;
     this.maxThreshold = 0.122;  // 0.067
+    this.isRefractory = false;
+    this.refractoryTime = 0;
   }
 
   // Method to trigger signal propagation
@@ -56,25 +58,6 @@ class Neuron {
   propagateSignal() {
     // reset membrane potential after giving a spike
     this.membranePotential = initPotential;
-
-    // this.outgoingConnections.forEach((targetNeuron) => {
-    //   // Calculate the distance between neurons
-    //   const dx = targetNeuron.x - this.x;
-    //   const dy = targetNeuron.y - this.y;
-    //   const distance = Math.sqrt(dx * dx + dy * dy);
-
-    //   // Calculate the signal strength based on distance (you can adjust the factor)
-    //   const signalStrength = this.signalStrength / Math.sqrt(distance); // Adjust the factor as needed
-
-    //   // // if passed distance >= distance: call the receive() method
-    //   // // this is a neuron class but I need a signal instance to so!
-
-    //   // // Only RECEIVE the signal if it's strong enough
-    //   if ((Math.abs(signalStrength) > 0.00001)) {
-    //     targetNeuron.receiveSignal(signalStrength);
-    //     console.log(`${targetNeuron.id} must receive a signal  ${signalStrength}`);
-    //   }
-    // });
   }
 
   // Method to receive a signal from an incoming connection
@@ -116,7 +99,7 @@ class Signal {
     this.currentY = startY;
     this.distancePassed = 0;
     this.progress = 1;
-    this.speed = 2; // Adjust as needed
+    this.speed = 4; // Adjust as needed
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
@@ -202,7 +185,7 @@ function drawNeuron(neuron) {
   neuron.time += 1;
 
   let alpha = -0.2 + neuron.membranePotential / potentialThreshold;
-  let color = neuron.isInhib ? `rgba(255, ${(100 * (alpha))}, 0, ${alpha})` : `rgba(0, ${(25 * alpha)}, 255, ${alpha})`;
+  let color = neuron.isInhib ? `rgba(255, ${(25 * (alpha))}, 0, ${alpha})` : `rgba(0, ${(25 * alpha)}, 255, ${alpha})`;
 
   if (isFiring) {
     ctx.beginPath();
@@ -229,6 +212,7 @@ function drawNeuron(neuron) {
 
 // Simulation update function
 function updateSimulation(neurons) {
+  let allSignals = [];
   neurons.forEach((neuron) => {
     neuron.updateFiringRateHistory();
 
@@ -244,16 +228,38 @@ function updateSimulation(neurons) {
       });
       neuron.toggleFiring();
     }
+
+    neuron.outgoingSignals.forEach((signal) => {
+      if (!signal.finished) {
+        allSignals.push(signal);
+      }
+    });
+  });
+
+  allSignals.forEach((signal) => {
+    signal.update();
+
+    // if passed distance >= distance: call the receive() method
+    if ((signal.distancePassed >= signal.distance)) {
+      // console.log(`${targetNeuron.id} must receive a signal ${signalStrength} strength from ${neuron.id}`);
+      signal.targetNeuron.receiveSignal(signal.power);
+    }
+
+    // if (signal.finished) {
+    //   // Check if the signal has reached the end, and remove it if needed
+    //   signal.neuron.outgoingSignals.splice(signal.neuron.outgoingSignals.indexOf(signal), 1);
+    // }
+
+    // need to remove finished signals from the all neurons.outgoingSignals
+    // signal.neuron.outgoingSignals = signal.neuron.outgoingSignals.filter(signal => !signal.finished);
+
   });
 
   // Inside your simulation loop, after updating the neurons:
   const currentTime = t  /* Get the current time (e.g., in seconds) */;
   // const membranePotential = totalFiringRate / neurons.length;
 
-  if (currentTime % 10 === 0) {
-    updateChart(currentTime, null);
-    // updateChartPlotly(currentTime, membranePotential);
-  }
+  updateChart(currentTime, null);
 }
 
 // Function to draw a connection between two points
@@ -266,28 +272,57 @@ function drawConnection(fromX, fromY, toX, toY, color) {
   ctx.closePath();
 }
 
-function drawSignal(neuron, signal) {
-  // Draw the signal at its current position
-  const currentX = signal.currentX;
-  const currentY = signal.currentY;
 
-  // // let alpha = Math.abs(neuron.signalStrength) / (Math.abs(neuron.signalStrength) / Math.sqrt(signal.distance));
-  // let alpha = 0.5 - (signal.progress / 100);
-  // // console.log(signal.finished);
-  // color = neuron.isInhib ? `rgba(255 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
-  // drawConnection(signal.startX, signal.startY, signal.endX, signal.endY, color);
+function drawSignal(signal) {
+  // Draw the signal at its current position
+  const currentX = signal.currentX + Math.random() / 2;
+  const currentY = signal.currentY + Math.random() / 2;
+
+
+  let alpha = 0.5 - (signal.power / signal.initPower);
+  // console.log(signal.finished);
+  color = signal.isInhib ? `rgba(255, 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
+  if (alpha < 0.01) {
+    return;
+  }
 
   ctx.beginPath();
   ctx.arc(currentX, currentY, 1, 0, Math.PI * 2);
-
-  // let alpha = Math.abs(neuron.signalStrength) / (Math.abs(neuron.signalStrength) / Math.sqrt(signal.distance));
-  let alpha = 0.75 - (signal.progress / 100);
-  // console.log(signal.finished);
-  color = neuron.isInhib ? `rgba(255, ${neuron.id / 100}, 0, ${alpha})` : `rgba(0, ${neuron.id / 100}, 255, ${alpha})`;
   ctx.fillStyle = color;
   ctx.fill();
   ctx.closePath();
 }
+
+// LINES approach
+// function drawSignal(signal) {
+//   // Check if the signal has finished
+//   if (signal.finished) {
+//     console.log('shouldnt see that;');
+//     return; // Exit early if the signal has finished
+//   }
+
+//   // Draw the signal at its current position
+//   const startX = signal.startX + Math.random() / 10;
+//   const startY = signal.startY + Math.random() / 10;
+//   const currentX = signal.currentX;
+//   const currentY = signal.currentY; 
+
+//   ctx.beginPath();
+//   ctx.moveTo(startX, startY);
+//   ctx.lineTo(currentX, currentY);
+
+//   // Set color and opacity based on signal properties
+//   let alpha = 0.2 - (signal.power / signal.initPower);
+//   let color = signal.isInhib ? `rgba(255, 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
+//   ctx.strokeStyle = color;
+
+//   // Adjust line width based on signal properties
+//   ctx.lineWidth = 0.5;
+
+//   // Draw the signal
+//   ctx.stroke();
+//   ctx.closePath();
+// }
 
 // Visualization update function
 function updateVisualization(neurons) {
@@ -299,31 +334,15 @@ function updateVisualization(neurons) {
     drawNeuron(neuron);
 
     neuron.outgoingSignals.forEach((signal) => {
-      signal.neuron = neuron;
-      allSignals.push(signal);
+      if (!signal.finished) {
+        allSignals.push(signal);
+      }
     });
   });
 
   // Draw outgoing signals
   allSignals.forEach((signal) => {
-    signal.update();
-
-    if (parseInt(signal.progress) % 3 === 0) {
-      drawSignal(signal.neuron, signal);
-    }
-
-    // if passed distance >= distance: call the receive() method
-    if ((signal.distancePassed >= signal.distance)) {
-      // console.log(`${targetNeuron.id} must receive a signal ${signalStrength} strength from ${neuron.id}`);
-      signal.targetNeuron.receiveSignal(signal.power);
-    }
-
-    if (signal.finished) {
-      // Check if the signal has reached the end, and remove it if needed
-      signal.neuron.outgoingSignals.splice(signal.neuron.outgoingSignals.indexOf(signal), 1);
-    }
-
-    signal.neuron.outgoingSignals = signal.neuron.outgoingSignals.filter(signal => !signal.finished);
+    drawSignal(signal);
   });
 }
 
@@ -407,9 +426,6 @@ function simulationLoop() {
     updateVisualization(neurons);
     t += 1;
   }
-
-  // Call the function to update the chart with the new data
-  updateChart(t, null);
 
   // Request the next animation frame
   requestAnimationFrame(simulationLoop);
