@@ -1,8 +1,13 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 8;
+const N = 2 ** 9;
 const initPotential = 40 * 1e-3;
 const potentialThreshold = 56 * 1e-3;
+const connectionProbThreshold = 0.33;  // probability threshold to form a connection between neurons
+const chartWidth = 1200;
+const chartHeight = 300;
+const canvasWidth = 1200;
+const canvasHeight = 600;
 
 class Neuron {
   constructor(id, membranePotential, x, y, isInhib) {
@@ -115,7 +120,7 @@ class Signal {
     this.currentY = startY;
     this.distancePassed = 0;
     this.progress = 1;
-    this.speed = 1; // Adjust as needed
+    this.speed = 2; // Adjust as needed
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
@@ -168,7 +173,7 @@ class Signal {
 
 function setupCanvas(canvas) {
   // Get the device pixel ratio, falling back to 1.
-  var dpr = window.devicePixelRatio || 1;
+  var dpr = window.devicePixelRatio || 2;
   // Get the size of the canvas in CSS pixels.
   var rect = canvas.getBoundingClientRect();
   // Give the canvas pixel dimensions of their CSS
@@ -189,8 +194,8 @@ var ctx = setupCanvas(canvas);
 document.getElementById("visualization-container").appendChild(canvas);
 
 // Set canvas dimensions
-canvas.width = 800;
-canvas.height = 600;
+canvas.width = canvasWidth;
+canvas.height = canvasHeight;
 
 // Function to draw neurons
 function drawNeuron(neuron) {
@@ -206,13 +211,13 @@ function drawNeuron(neuron) {
 
   if (isFiring) {
     ctx.beginPath();
-    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.arc(x, y, 4, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
   } else {
     ctx.beginPath();
-    ctx.arc(x, y, 5, 0, Math.PI * 2);
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
@@ -280,9 +285,7 @@ function updateSimulation(neurons) {
 
   // Inside your simulation loop, after updating the neurons:
   const currentTime = t  /* Get the current time (e.g., in seconds) */;
-  // const membranePotential = totalFiringRate / neurons.length;
-
-  updateChart(currentTime, null);
+  // updateChart(currentTime, null);
 }
 
 // Function to draw a connection between two points
@@ -310,7 +313,7 @@ function drawSignal(signal) {
   }
 
   ctx.beginPath();
-  ctx.arc(currentX, currentY, 1, 0, Math.PI * 2);
+  ctx.arc(currentX, currentY, 0.5, 0, Math.PI * 2);
   ctx.fillStyle = color;
   ctx.fill();
   ctx.closePath();
@@ -330,8 +333,22 @@ function drawSignalLines(signal) {
   const currentX = signal.currentX;
   const currentY = signal.currentY;
 
+  // Calculate the number of intermediate points
+  const numSegments = 40;
+  const dx = (currentX - startX) / numSegments;
+  const dy = (currentY - startY) / numSegments;
+
   ctx.beginPath();
   ctx.moveTo(startX, startY);
+
+  // Draw intermediate points
+  for (let i = 1; i < numSegments; i++) {
+    const x = startX + i * dx + Math.random() * 10; // Add some randomness
+    const y = startY + i * dy + Math.random() * 10; // Add some randomness
+    ctx.lineTo(x, y);
+  }
+
+  // Draw the final point
   ctx.lineTo(currentX, currentY);
 
   // Set color and opacity based on signal properties
@@ -345,6 +362,7 @@ function drawSignalLines(signal) {
   // Draw the signal
   ctx.stroke();
   ctx.closePath();
+
 }
 
 // Visualization update function
@@ -388,10 +406,10 @@ for (let index = 0; index < N; index++) {
 for (let i = 0; i < neurons.length; i++) {
   for (let j = 0; j < neurons.length; j++) {
     if (i !== j) {
-      if (Math.random() > 0.6) {
+      if (Math.random() > connectionProbThreshold) {
         neurons[i].addOutgoingConnection(neurons[j]);
       }
-      if (Math.random() > 0.6) {
+      if (Math.random() > connectionProbThreshold) {
         neurons[i].addIncomingConnection(neurons[j]);
       }
     }
@@ -406,8 +424,8 @@ function updateChart(time, membranePotential) {
   // membranePotentialChart.update(); // TODO
   const traces = neurons.map((neuron) => ({
     marker: { color: neuron.isInhib ? "red" : "blue" },
-    opacity: 0.33,
-    name: `Neuron ${neuron.id} Firing Rate`,
+    opacity: 0.12,
+    name: `Neuron ${neuron.id} membrane potential`,
     y: neuron.firingRateHistory, // Initialize with an empty array
   }));
 
@@ -415,8 +433,8 @@ function updateChart(time, membranePotential) {
 
   var layout = {
     autosize: false,
-    width: 600,
-    height: 250,
+    width: chartWidth,
+    height: chartHeight,
     plot_bgcolor: "black",
     paper_bgcolor: "#1e0f29",
     showlegend: false,
