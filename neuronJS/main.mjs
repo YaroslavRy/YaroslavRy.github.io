@@ -1,8 +1,8 @@
 const debug = false;
-const inhibProbThreshold = 0.7;
-const N = 2 ** 7;
+const inhibProbThreshold = 0.66;
+const N = 2 ** 8;
 const initPotential = 40 * 1e-3;
-const potentialThreshold = 60 * 1e-3;
+const potentialThreshold = 56 * 1e-3;
 
 class Neuron {
   constructor(id, membranePotential, x, y, isInhib) {
@@ -24,10 +24,26 @@ class Neuron {
     this.firingRateHistory = [];
     this.maxHistoryLength = 200;
     this.color = this.isInhib ? 'red' : 'blue';
-    this.minThreshold = 0.05;
-    this.maxThreshold = 0.122;  // 0.067
+    this.minThreshold = 25 * 1e-3;
     this.isRefractory = false;
+    this.initRefractoryTime = 1;
     this.refractoryTime = 0;
+    this.refractoryPotential = 35 * 1e-3;
+  }
+
+  triggerRefractory() {
+    this.isRefractory = true;
+    this.refractoryTime = this.initRefractoryTime;
+  }
+
+  updateRefractory() {
+    if (this.isRefractory) {
+      this.refractoryTime -= 1;
+    }
+    if (this.refractoryTime <= 0) {
+      this.isRefractory = false;
+      this.membranePotential = initPotential + (0.5 - Math.random()) / 1000;
+    }
   }
 
   // Method to trigger signal propagation
@@ -57,7 +73,7 @@ class Neuron {
   // Method to propagate the signal to outgoing connections
   propagateSignal() {
     // reset membrane potential after giving a spike
-    this.membranePotential = initPotential;
+    this.membranePotential = this.refractoryPotential;
   }
 
   // Method to receive a signal from an incoming connection
@@ -99,7 +115,7 @@ class Signal {
     this.currentY = startY;
     this.distancePassed = 0;
     this.progress = 1;
-    this.speed = 4; // Adjust as needed
+    this.speed = 1; // Adjust as needed
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
@@ -173,8 +189,8 @@ var ctx = setupCanvas(canvas);
 document.getElementById("visualization-container").appendChild(canvas);
 
 // Set canvas dimensions
-canvas.width = 600;
-canvas.height = 400;
+canvas.width = 800;
+canvas.height = 600;
 
 // Function to draw neurons
 function drawNeuron(neuron) {
@@ -185,7 +201,8 @@ function drawNeuron(neuron) {
   neuron.time += 1;
 
   let alpha = -0.2 + neuron.membranePotential / potentialThreshold;
-  let color = neuron.isInhib ? `rgba(255, ${(25 * (alpha))}, 0, ${alpha})` : `rgba(0, ${(25 * alpha)}, 255, ${alpha})`;
+
+  let color = neuron.isInhib ? `rgba(255, ${(25 * (alpha))}, 0, ${alpha})` : `rgba(${(55 * alpha)}, 0, 255, ${alpha})`;
 
   if (isFiring) {
     ctx.beginPath();
@@ -215,18 +232,24 @@ function updateSimulation(neurons) {
   let allSignals = [];
   neurons.forEach((neuron) => {
     neuron.updateFiringRateHistory();
+    neuron.updateRefractory();
 
     // add noise
-    neuron.membranePotential += ((Math.random() / 100) * ((0.5 - Math.random()) / 5));
+    // neuron.membranePotential += (((0.5 - Math.random()) / 100));
+    neuron.membranePotential += gaussianRandom(1e-3, 5e-3);
 
     // Simulate firing with a probability based on average firing rate
     // Or the reaching of a membrane potential threshold
     if (potentialThreshold < neuron.membranePotential) {
+      if (neuron.isRefractory) {
+        return;
+      }
       neuron.toggleFiring();
       neuron.outgoingConnections.forEach((targetNeuron) => {
         neuron.triggerSignal(targetNeuron);
       });
       neuron.toggleFiring();
+      neuron.triggerRefractory()
     }
 
     neuron.outgoingSignals.forEach((signal) => {
@@ -294,35 +317,35 @@ function drawSignal(signal) {
 }
 
 // LINES approach
-// function drawSignal(signal) {
-//   // Check if the signal has finished
-//   if (signal.finished) {
-//     console.log('shouldnt see that;');
-//     return; // Exit early if the signal has finished
-//   }
+function drawSignalLines(signal) {
+  // Check if the signal has finished
+  if (signal.finished) {
+    console.log('shouldnt see that;');
+    return; // Exit early if the signal has finished
+  }
 
-//   // Draw the signal at its current position
-//   const startX = signal.startX + Math.random() / 10;
-//   const startY = signal.startY + Math.random() / 10;
-//   const currentX = signal.currentX;
-//   const currentY = signal.currentY; 
+  // Draw the signal at its current position
+  const startX = signal.startX + Math.random() / 10;
+  const startY = signal.startY + Math.random() / 10;
+  const currentX = signal.currentX;
+  const currentY = signal.currentY;
 
-//   ctx.beginPath();
-//   ctx.moveTo(startX, startY);
-//   ctx.lineTo(currentX, currentY);
+  ctx.beginPath();
+  ctx.moveTo(startX, startY);
+  ctx.lineTo(currentX, currentY);
 
-//   // Set color and opacity based on signal properties
-//   let alpha = 0.2 - (signal.power / signal.initPower);
-//   let color = signal.isInhib ? `rgba(255, 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
-//   ctx.strokeStyle = color;
+  // Set color and opacity based on signal properties
+  let alpha = 0.2 - (signal.power / signal.initPower);
+  let color = signal.isInhib ? `rgba(255, 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
+  ctx.strokeStyle = color;
 
-//   // Adjust line width based on signal properties
-//   ctx.lineWidth = 0.5;
+  // Adjust line width based on signal properties
+  ctx.lineWidth = 0.5;
 
-//   // Draw the signal
-//   ctx.stroke();
-//   ctx.closePath();
-// }
+  // Draw the signal
+  ctx.stroke();
+  ctx.closePath();
+}
 
 // Visualization update function
 function updateVisualization(neurons) {
@@ -343,6 +366,7 @@ function updateVisualization(neurons) {
   // Draw outgoing signals
   allSignals.forEach((signal) => {
     drawSignal(signal);
+    drawSignalLines(signal);
   });
 }
 
@@ -355,7 +379,7 @@ var neurons = [];
 
 for (let index = 0; index < N; index++) {
   let isInhib = Math.random() > inhibProbThreshold ? true : false;
-  let potential = initPotential + Math.random() / 100;  // init start membrane potential
+  let potential = initPotential; // + (Math.random() / 1 * 1e-10);  // init start membrane potential
   neurons.push(new Neuron(index, potential, x = null, y = null, isInhib = isInhib));
 }
 
@@ -364,10 +388,10 @@ for (let index = 0; index < N; index++) {
 for (let i = 0; i < neurons.length; i++) {
   for (let j = 0; j < neurons.length; j++) {
     if (i !== j) {
-      if (Math.random() > 0.65) {
+      if (Math.random() > 0.6) {
         neurons[i].addOutgoingConnection(neurons[j]);
       }
-      if (Math.random() > 0.65) {
+      if (Math.random() > 0.6) {
         neurons[i].addIncomingConnection(neurons[j]);
       }
     }
@@ -445,3 +469,13 @@ toggleSimulationBtn.addEventListener("click", () => {
   toggleSimulation();
   toggleSimulationBtn.textContent = isSimulationRunning ? "Pause Simulation" : "Resume Simulation";
 });
+
+
+// Standard Normal variate using Box-Muller transform.
+function gaussianRandom(mean = 0, stdev = 1) {
+  const u = 1 - Math.random(); // Converting [0,1) to (0,1]
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  // Transform to the desired mean and standard deviation:
+  return z * stdev + mean;
+}
