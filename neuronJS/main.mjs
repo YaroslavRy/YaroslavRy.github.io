@@ -1,9 +1,9 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 9;
+const N = 2 ** 8;
 const initPotential = 40 * 1e-3;
 const potentialThreshold = 56 * 1e-3;
-const connectionProbThreshold = 0.33;  // probability threshold to form a connection between neurons
+const connectionProbThreshold = 0.25;  // probability threshold to form a connection between neurons
 const chartWidth = 1200;
 const chartHeight = 300;
 const canvasWidth = 1200;
@@ -31,7 +31,7 @@ class Neuron {
     this.color = this.isInhib ? 'red' : 'blue';
     this.minThreshold = 25 * 1e-3;
     this.isRefractory = false;
-    this.initRefractoryTime = 1;
+    this.initRefractoryTime = 2;
     this.refractoryTime = 0;
     this.refractoryPotential = 35 * 1e-3;
   }
@@ -120,7 +120,7 @@ class Signal {
     this.currentY = startY;
     this.distancePassed = 0;
     this.progress = 1;
-    this.speed = 2; // Adjust as needed
+    this.speed = 1; // Adjust as needed
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
@@ -334,7 +334,7 @@ function drawSignalLines(signal) {
   const currentY = signal.currentY;
 
   // Calculate the number of intermediate points
-  const numSegments = 40;
+  const numSegments = 30;
   const dx = (currentX - startX) / numSegments;
   const dy = (currentY - startY) / numSegments;
 
@@ -352,12 +352,12 @@ function drawSignalLines(signal) {
   ctx.lineTo(currentX, currentY);
 
   // Set color and opacity based on signal properties
-  let alpha = 0.2 - (signal.power / signal.initPower);
-  let color = signal.isInhib ? `rgba(255, 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
+  let alpha = 0.1 - (signal.power / signal.initPower - 0.1);
+  let color = signal.isInhib ? `rgba(255, ${alpha}, 0, ${alpha})` : `rgba(0, ${alpha}, 255, ${alpha})`;
   ctx.strokeStyle = color;
 
   // Adjust line width based on signal properties
-  ctx.lineWidth = 0.5;
+  ctx.lineWidth = 0.3;
 
   // Draw the signal
   ctx.stroke();
