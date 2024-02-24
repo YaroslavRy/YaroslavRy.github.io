@@ -307,7 +307,7 @@ function drawSignal(signal) {
   const currentY = signal.currentY + Math.random() / 2;
 
 
-  let alpha = 1 - (signal.power / signal.initPower);
+  let alpha = 1 - (signal.power / signal.initPower / 2);
   // console.log(signal.finished);
   color = signal.isInhib ? `rgba(242, 82, 125, ${alpha})` : `rgba(23, 216, 216, ${alpha})`;
   if (alpha < 0.01) {
