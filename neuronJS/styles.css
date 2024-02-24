@@ -10,7 +10,7 @@
 
  /* Add your CSS styles here */
 canvas {
-    border: 1px solid black;
+    /* border: 1px solid black; */
     background-color: #151740;
     padding: 0;
     margin: auto;
@@ -19,9 +19,18 @@ canvas {
 }
 
 body {
-    background-color: #151740;
+    background-color: #17133b !important;
 }
 
 #play{
     margin: 20px;
+}
+
+#play {
+    background-color: #19355e;
+    border: none;
+}
+
+#main-viz-cont{
+    margin: 50px !important;
 }
