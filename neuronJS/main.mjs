@@ -1,6 +1,6 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 8;
+const N = 2 ** 7;
 const initPotential = 40 * 1e-3;
 const potentialThreshold = 56 * 1e-3;
 const connectionProbThreshold = 0.25;  // probability threshold to form a connection between neurons
@@ -8,6 +8,8 @@ const chartWidth = 1200;
 const chartHeight = 300;
 const canvasWidth = 1200;
 const canvasHeight = 600;
+
+
 
 class Neuron {
   constructor(id, membranePotential, x, y, isInhib) {
@@ -27,11 +29,11 @@ class Neuron {
     this.signalStrength = 120 * 1e-3 * this.signalSign;
     this.time = 0;
     this.firingRateHistory = [];
-    this.maxHistoryLength = 200;
+    this.maxHistoryLength = 300;
     this.color = this.isInhib ? 'red' : 'blue';
     this.minThreshold = 25 * 1e-3;
     this.isRefractory = false;
-    this.initRefractoryTime = 2;
+    this.initRefractoryTime = 0.1 + Math.random() * 10;
     this.refractoryTime = 0;
     this.refractoryPotential = 35 * 1e-3;
   }
@@ -120,10 +122,10 @@ class Signal {
     this.currentY = startY;
     this.distancePassed = 0;
     this.progress = 1;
-    this.speed = 1; // Adjust as needed
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
+    this.speed = 1000 / this.distance; // Adjust as needed
     this.finished = 0;
     this.power;
     this.targetNeuron = targetNeuron;
@@ -207,17 +209,17 @@ function drawNeuron(neuron) {
 
   let alpha = -0.2 + neuron.membranePotential / potentialThreshold;
 
-  let color = neuron.isInhib ? `rgba(255, ${(25 * (alpha))}, 0, ${alpha})` : `rgba(${(55 * alpha)}, 0, 255, ${alpha})`;
+  let color = neuron.isInhib ? `rgba(242, 82, 125, ${alpha})` : `rgba(23, 216, 216, ${alpha})`;
 
   if (isFiring) {
     ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
+    ctx.arc(x, y, 12, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
   } else {
     ctx.beginPath();
-    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.arc(x, y, 2, 0, Math.PI * 2);
     ctx.fillStyle = color;
     ctx.fill();
     ctx.closePath();
@@ -305,15 +307,15 @@ function drawSignal(signal) {
   const currentY = signal.currentY + Math.random() / 2;
 
 
-  let alpha = 0.5 - (signal.power / signal.initPower);
+  let alpha = 1 - (signal.power / signal.initPower);
   // console.log(signal.finished);
-  color = signal.isInhib ? `rgba(255, 0, 0, ${alpha})` : `rgba(0, 0, 255, ${alpha})`;
+  color = signal.isInhib ? `rgba(242, 82, 125, ${alpha})` : `rgba(23, 216, 216, ${alpha})`;
   if (alpha < 0.01) {
     return;
   }
 
   ctx.beginPath();
-  ctx.arc(currentX, currentY, 0.5, 0, Math.PI * 2);
+  ctx.arc(currentX, currentY, 0.4, 0, Math.PI * 2);
   ctx.fillStyle = color;
   ctx.fill();
   ctx.closePath();
@@ -334,7 +336,7 @@ function drawSignalLines(signal) {
   const currentY = signal.currentY;
 
   // Calculate the number of intermediate points
-  const numSegments = 30;
+  const numSegments = 10;
   const dx = (currentX - startX) / numSegments;
   const dy = (currentY - startY) / numSegments;
 
@@ -353,11 +355,11 @@ function drawSignalLines(signal) {
 
   // Set color and opacity based on signal properties
   let alpha = 0.1 - (signal.power / signal.initPower - 0.1);
-  let color = signal.isInhib ? `rgba(255, ${alpha}, 0, ${alpha})` : `rgba(0, ${alpha}, 255, ${alpha})`;
+  let color = signal.isInhib ? `rgba(242, 82, 125, ${alpha})` : `rgba(23, 216, 216, ${alpha})`;
   ctx.strokeStyle = color;
 
   // Adjust line width based on signal properties
-  ctx.lineWidth = 0.3;
+  ctx.lineWidth = 0.4;
 
   // Draw the signal
   ctx.stroke();
@@ -461,16 +463,26 @@ let isSimulationRunning = true;
 
 var t = 0;
 
+// Define a variable to track the last time the chart was updated
+let lastChartUpdateTime = performance.now();
+let timeLabels = [];
+
 // Define a function for the simulation loop
 function simulationLoop() {
   if (isSimulationRunning) {
     updateSimulation(neurons);
     updateVisualization(neurons);
     t += 1;
+
+    const currentTime = performance.now(); // Get the current time
+    asyncUpdateChart(currentTime, null); // Call the chart update function
+
+    // Request the next animation frame
+    requestAnimationFrame(simulationLoop);
+    // Request the next animation frame to continue updating the chart asynchronously
+    requestAnimationFrame(asyncUpdateChart);
   }
 
-  // Request the next animation frame
-  requestAnimationFrame(simulationLoop);
 }
 
 // Start the simulation loop
@@ -497,3 +509,54 @@ function gaussianRandom(mean = 0, stdev = 1) {
   // Transform to the desired mean and standard deviation:
   return z * stdev + mean;
 }
+
+// Function to update the chart asynchronously
+function asyncUpdateChart(time, membranePotential) {
+  // Calculate the time elapsed since the last chart update
+  const elapsedTime = time - lastChartUpdateTime;
+
+  // Update the chart only if enough time has passed since the last update
+  if (elapsedTime >= 100) { // Update chart every 100 milliseconds (adjust as needed)
+    // console.log(1);
+    updateChart(time, membranePotential);
+    lastChartUpdateTime = time;
+  }
+}
+
+// Function to update the chart with new data
+// function updateChart(time, membranePotential) {
+//   timeLabels.push(time);
+
+//   // Update the chart data
+//   const traces = neurons.map((neuron) => ({
+//     // marker: { color: neuron.isInhib ? "red" : "blue" },
+//     opacity: 0.12,
+//     // name: `Neuron ${neuron.id} membrane potential`,
+//     // x: timeLabels,
+//     y: neuron.firingRateHistory, // Initialize with an empty array
+//   }));
+
+//   const data = traces;
+
+//   // Update the chart layout if needed
+//   // const layout = { ... }; // Update layout properties as needed
+//   let layout = {
+//     autosize: false,
+//     width: chartWidth,
+//     height: chartHeight,
+//     plot_bgcolor: "black",
+//     paper_bgcolor: "#1e0f29",
+//     showlegend: false
+//   }
+//   // Plotly.react('myDiv', data, layout);
+//   Plotly.react('myDiv', data, layout = layout); // Assuming layout doesn't change
+
+//   // Optionally, update any other UI elements related to the chart
+// }
+
+// Inside the simulation loop, after updating the simulation:
+const currentTime = t; /* Get the current time (e.g., in milliseconds) */
+// console.log("Updating chart at time:", currentTime);
+// asyncUpdateChart(currentTime, null); // Start the asynchronous chart update
+
+// Note: You might need to adjust the conditions for updating the chart and the update interval based on your specific requirements and performance considerations.
