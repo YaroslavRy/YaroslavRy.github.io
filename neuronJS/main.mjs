@@ -494,11 +494,11 @@ function toggleSimulation() {
 }
 
 // Add an event listener to the button
-const toggleSimulationBtn = document.getElementById("play");
-toggleSimulationBtn.addEventListener("click", () => {
-  toggleSimulation();
-  toggleSimulationBtn.textContent = isSimulationRunning ? "Pause Simulation" : "Resume Simulation";
-});
+// const toggleSimulationBtn = document.getElementById("play");
+// toggleSimulationBtn.addEventListener("click", () => {
+//   toggleSimulation();
+//   toggleSimulationBtn.textContent = isSimulationRunning ? "Pause Simulation" : "Resume Simulation";
+// });
 
 
 // Standard Normal variate using Box-Muller transform.
@@ -560,3 +560,34 @@ const currentTime = t; /* Get the current time (e.g., in milliseconds) */
 // asyncUpdateChart(currentTime, null); // Start the asynchronous chart update
 
 // Note: You might need to adjust the conditions for updating the chart and the update interval based on your specific requirements and performance considerations.
+
+
+// Define a function to resume the simulation loop
+function resumeSimulation() {
+  isSimulationRunning = true;
+  simulationLoop(); // Restart the simulation loop
+}
+
+// Add an event listener to the button to resume the simulation
+const resumeSimulationBtn = document.getElementById("play");
+resumeSimulationBtn.addEventListener("click", () => {
+  resumeSimulation();
+  resumeSimulationBtn.textContent = "Pause Simulation";
+});
+
+// Define a function to pause the simulation loop
+function pauseSimulation() {
+  isSimulationRunning = false;
+}
+
+// Add an event listener to the button to toggle between pausing and resuming the simulation
+const toggleSimulationBtn = document.getElementById("play");
+toggleSimulationBtn.addEventListener("click", () => {
+  if (isSimulationRunning) {
+    pauseSimulation();
+    toggleSimulationBtn.textContent = "Resume Simulation";
+  } else {
+    resumeSimulation();
+    toggleSimulationBtn.textContent = "Pause Simulation";
+  }
+});
