@@ -8,34 +8,40 @@
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
     <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
+
+    <!-- Bootstrap core CSS -->
+    <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
 </head>
+
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-129QRHXWWJ"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+
+    gtag('config', 'G-129QRHXWWJ');
+</script>
 
 <body>
 
     <div class="container">
-        <div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
+
 
         <div id="main-viz-cont">
+
             <div class="row" style="display: flex;">
 
                 <div class="col-xs-6">
                     <div id="visualization-container">
+                        <div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
 
                     </div>
-                    <button id="play">Pause simulation</button>
+                    <button type="button" class="btn btn-primary" id="play">Pause simulation</button>
                 </div>
 
-                <!-- <div class="col-xs-6">-->
-                <!-- <canvas id="avgFiringRateChart"></canvas> 
-            </div>
-
-
-
-        </div>
-    </div>
-    </div>
-
-    <script src="neuron.js"></script> -->
                 <script src="main.mjs"></script>
             </div>
         </div>

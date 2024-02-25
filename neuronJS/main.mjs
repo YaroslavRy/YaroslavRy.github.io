@@ -1,6 +1,6 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 10;
+const N = 2 ** 7;
 const initPotential = 40 * 1e-3;
 const potentialThreshold = 56 * 1e-3;
 const connectionProbThreshold = 0.25;  // probability threshold to form a connection between neurons
@@ -11,9 +11,8 @@ const canvasHeight = 600;
 const chartWidth = canvasWidth;
 const chartHeight = 300;
 
-const drawPlot = false;
+const drawPlot = true;
 const chartInterval = 1;
-
 
 
 class Neuron {
@@ -130,7 +129,7 @@ class Signal {
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
-    this.speed = 1000 / this.distance + Math.random() / 1; // Adjust as needed
+    this.speed = 500 / this.distance + Math.random() * 4; // Adjust as needed
     this.finished = 0;
     this.power;
     this.targetNeuron = targetNeuron;
@@ -204,6 +203,23 @@ document.getElementById("visualization-container").appendChild(canvas);
 canvas.width = canvasWidth;
 canvas.height = canvasHeight;
 
+
+function getRGBaColor(color, alpha) {
+  if (color === 'red') {
+    return `rgba(207, 0, 0, ${alpha})`;
+  } if (color === 'blue') {
+    return `rgba(31, 66, 255, ${alpha})`;
+  }
+}
+
+function sigmoid(x, a, h, slope, c) {
+  return 1 / (1 + Math.exp(-(x - h) / slope)) * a + c
+}
+
+function getAlphaSigmoid(x, h = 0.5) {
+  return sigmoid(x, 1, h, 0.12, 0.0);
+}
+
 // Function to draw neurons
 function drawNeuron(neuron) {
   x = neuron.x;
@@ -217,11 +233,11 @@ function drawNeuron(neuron) {
   if (isFiring) {
     alpha = 1;
   } else {
-    alpha = -0.5 + neuron.membranePotential / potentialThreshold;
+    // alpha = -0.6 + neuron.membranePotential / potentialThreshold;
+    alpha = getAlphaSigmoid(neuron.membranePotential / potentialThreshold, h=0.8)
   }
 
-
-  let color = neuron.isInhib ? `rgba(242, 82, 125, ${alpha})` : `rgba(23, 216, 216, ${alpha})`;
+  let color = neuron.isInhib ? getRGBaColor('red', alpha) : getRGBaColor('blue', alpha);
 
   if (isFiring) {
     ctx.beginPath();
@@ -255,7 +271,7 @@ function updateSimulation(neurons) {
 
     // add noise
     // neuron.membranePotential += (((0.5 - Math.random()) / 100));
-    neuron.membranePotential += gaussianRandom(1e-3, 4e-3);
+    neuron.membranePotential += gaussianRandom(1e-3, 3.4e-3);
 
     // Simulate firing with a probability based on average firing rate
     // Or the reaching of a membrane potential threshold
@@ -340,7 +356,7 @@ function drawSignalLines(signal) {
   const currentY = signal.currentY;
 
   // Calculate the number of intermediate points
-  const numSegments = 10;
+  const numSegments = 20;
   const dx = (currentX - startX) / numSegments;
   const dy = (currentY - startY) / numSegments;
 
@@ -358,12 +374,13 @@ function drawSignalLines(signal) {
   ctx.lineTo(currentX, currentY);
 
   // Set color and opacity based on signal properties
-  let alpha = (signal.power / signal.initPower) + 0.00;
-  let color = signal.isInhib ? `rgba(242, 82, 125, ${alpha})` : `rgba(23, 216, 216, ${alpha})`;
+  // let alpha = (signal.power / signal.initPower) + 0.00;
+  let alpha = getAlphaSigmoid(signal.power, h = 0.120);
+  let color = signal.isInhib ? getRGBaColor('red', alpha) : getRGBaColor('blue', alpha);
   ctx.strokeStyle = color;
 
   // Adjust line width based on signal properties
-  ctx.lineWidth = 0.5;
+  ctx.lineWidth = 0.9;
 
   // Draw the signal
   ctx.stroke();
@@ -438,6 +455,21 @@ function updateChart(time, membranePotential) {
   var data = traces;
 
   var layout = {
+    shapes: [
+      {
+        type: 'line',
+        xref: 'paper',
+        x0: 0,
+        y0: potentialThreshold,
+        x1: 1,
+        y1: potentialThreshold,
+        line: {
+          color: 'rgba(255, 0, 0, 0.2)',
+          width: 2,
+          dash: 'dot'
+        }
+      }
+    ],
     autosize: false,
     width: chartWidth,
     height: chartHeight,
