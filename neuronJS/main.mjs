@@ -4,6 +4,7 @@ const N = 2 ** 7;
 const initPotential = 40 * 1e-3;
 const potentialThreshold = 56 * 1e-3;
 const connectionProbThreshold = 0.25;  // probability threshold to form a connection between neurons
+const lambda = 1 * 1e-3;
 
 const canvasWidth = 1200;
 const canvasHeight = 600;
@@ -12,7 +13,13 @@ const chartWidth = canvasWidth;
 const chartHeight = 300;
 
 const drawPlot = true;
-const chartInterval = 1;
+const chartInterval = 10;
+const distanceConvert = 0.00000357;
+
+function convertPixelsToMeters(w, h) {
+
+  return;
+}
 
 
 class Neuron {
@@ -37,7 +44,7 @@ class Neuron {
     this.color = this.isInhib ? 'red' : 'blue';
     this.minThreshold = 25 * 1e-3;
     this.isRefractory = false;
-    this.initRefractoryTime = 0.1 + Math.random() * 6;
+    this.initRefractoryTime = 0.1 + Math.random() * 3;
     this.refractoryTime = 0;
     this.refractoryPotential = 35 * 1e-3;
   }
@@ -96,9 +103,15 @@ class Neuron {
       console.log(`${this.id} Received signal with strength ${signalStrength}`);
     }
 
+    // console.log(`${this.id} Received signal with strength ${signalStrength}, its potential from ${this.membranePotential}`);
+
     this.membranePotential += (signalStrength);
+
+    // console.log(`${this.id} Received signal with strength ${signalStrength}, its potential to ${this.membranePotential}`);
+
     // reset if the value is too low or is to high
-    this.membranePotential = Math.max(this.minThreshold, this.membranePotential);
+    // this.membranePotential = Math.max(this.minThreshold, this.membranePotential);
+
     // this.membranePotential = Math.min(this.maxThreshold, this.membranePotential);
   }
 
@@ -129,7 +142,7 @@ class Signal {
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
-    this.speed = 500 / this.distance + Math.random() * 4; // Adjust as needed
+    this.speed = 1000 / this.distance + Math.random() * 2; // Adjust as needed
     this.finished = 0;
     this.power;
     this.targetNeuron = targetNeuron;
@@ -158,7 +171,8 @@ class Signal {
 
     this.finished = this.isFinished();
 
-    this.power = this.initPower / Math.sqrt(this.distancePassed);
+    // this.power = this.initPower / Math.sqrt(this.distancePassed);
+    this.power = this.initPower * Math.exp((-this.distancePassed * distanceConvert) / lambda);
 
   }
 
@@ -234,7 +248,7 @@ function drawNeuron(neuron) {
     alpha = 1;
   } else {
     // alpha = -0.6 + neuron.membranePotential / potentialThreshold;
-    alpha = getAlphaSigmoid(neuron.membranePotential / potentialThreshold, h=0.8)
+    alpha = getAlphaSigmoid(neuron.membranePotential / potentialThreshold, h = 0.8)
   }
 
   let color = neuron.isInhib ? getRGBaColor('red', alpha) : getRGBaColor('blue', alpha);
@@ -271,7 +285,7 @@ function updateSimulation(neurons) {
 
     // add noise
     // neuron.membranePotential += (((0.5 - Math.random()) / 100));
-    neuron.membranePotential += gaussianRandom(1e-3, 3.4e-3);
+    neuron.membranePotential += gaussianRandom(1e-3, 3.6e-3);
 
     // Simulate firing with a probability based on average firing rate
     // Or the reaching of a membrane potential threshold
@@ -447,7 +461,7 @@ function updateChart(time, membranePotential) {
   // membranePotentialChart.update(); // TODO
   const traces = neurons.map((neuron) => ({
     marker: { color: neuron.isInhib ? "red" : "blue" },
-    opacity: (neurons.length / 5) / neurons.length,
+    opacity: getAlphaSigmoid(neuron.membranePotential / potentialThreshold, h = 0.95),
     name: `Neuron ${neuron.id} membrane potential`,
     y: neuron.firingRateHistory, // Initialize with an empty array
   }));
@@ -470,7 +484,7 @@ function updateChart(time, membranePotential) {
         }
       }
     ],
-    autosize: false,
+    autosize: true,
     width: chartWidth,
     height: chartHeight,
     plot_bgcolor: "black",
