@@ -1,9 +1,9 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 7;
+const N = 2 ** 5;
 const initPotential = 40 * 1e-3;
 const potentialThreshold = 56 * 1e-3;
-const connectionProbThreshold = 0.25;  // probability threshold to form a connection between neurons
+const connectionProbThreshold = 0;  // probability threshold to form a connection between neurons
 const lambda = 1 * 1e-3;
 
 const canvasWidth = 1200;
@@ -15,6 +15,8 @@ const chartHeight = 300;
 const drawPlot = true;
 const chartInterval = 10;
 const distanceConvert = 0.00000357;
+
+const noiseSTD = 5e-3;
 
 function convertPixelsToMeters(w, h) {
 
@@ -40,7 +42,7 @@ class Neuron {
     this.signalStrength = 120 * 1e-3 * this.signalSign;
     this.time = 0;
     this.firingRateHistory = [];
-    this.maxHistoryLength = 100;
+    this.maxHistoryLength = 500;
     this.color = this.isInhib ? 'red' : 'blue';
     this.minThreshold = 25 * 1e-3;
     this.isRefractory = false;
@@ -285,7 +287,7 @@ function updateSimulation(neurons) {
 
     // add noise
     // neuron.membranePotential += (((0.5 - Math.random()) / 100));
-    neuron.membranePotential += gaussianRandom(1e-3, 3.6e-3);
+    neuron.membranePotential += gaussianRandom(1e-3, noiseSTD);
 
     // Simulate firing with a probability based on average firing rate
     // Or the reaching of a membrane potential threshold
@@ -363,6 +365,15 @@ function drawSignalLines(signal) {
     return; // Exit early if the signal has finished
   }
 
+  // Set color and opacity based on signal properties
+  // let alpha = (signal.power / signal.initPower) + 0.00;
+  let alpha = getAlphaSigmoid(signal.power, h = 0.120);
+  if (alpha < 0.01) {
+    return;
+  }
+  let color = signal.isInhib ? getRGBaColor('red', alpha) : getRGBaColor('blue', alpha);
+  ctx.strokeStyle = color;
+
   // Draw the signal at its current position
   const startX = signal.startX + Math.random() / 1;
   const startY = signal.startY + Math.random() / 1;
@@ -386,16 +397,8 @@ function drawSignalLines(signal) {
 
   // Draw the final point
   ctx.lineTo(currentX, currentY);
-
-  // Set color and opacity based on signal properties
-  // let alpha = (signal.power / signal.initPower) + 0.00;
-  let alpha = getAlphaSigmoid(signal.power, h = 0.120);
-  let color = signal.isInhib ? getRGBaColor('red', alpha) : getRGBaColor('blue', alpha);
-  ctx.strokeStyle = color;
-
   // Adjust line width based on signal properties
-  ctx.lineWidth = 0.9;
-
+  ctx.lineWidth = 1;
   // Draw the signal
   ctx.stroke();
   ctx.closePath();
