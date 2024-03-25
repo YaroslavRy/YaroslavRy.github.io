@@ -16,6 +16,7 @@ canvas {
     margin: auto;
     display: block;
     /* width: 1500px; */
+    border: 1px solid rgb(27, 27, 72);
 }
 
 body {
