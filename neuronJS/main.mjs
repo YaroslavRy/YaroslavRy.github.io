@@ -1,22 +1,28 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 5;
-const initPotential = 40 * 1e-3;
-const potentialThreshold = 56 * 1e-3;
+const N = 2 ** 7;
+const initPotential = -80 * 1e-3;
+const potentialThreshold = -56 * 1e-3;
+const actionPotentialAmpl = 40 * 1e-3;
+const restingPotential = -70 * 1e-3;
+const refractoryPotential = -90 * 1e-3;
 const connectionProbThreshold = 0;  // probability threshold to form a connection between neurons
-const lambda = 1 * 1e-3;
+const lambda = 1 * 1e-3;  // distance where signal lose ~e of the strength
+const signalSpeedFactor = 4000;
+
+const spikeProb = 0.001;
 
 const canvasWidth = 1200;
-const canvasHeight = 600;
+const canvasHeight = 400;
 
 const chartWidth = canvasWidth;
 const chartHeight = 300;
 
 const drawPlot = true;
-const chartInterval = 10;
+const chartInterval = 1;
 const distanceConvert = 0.00000357;
 
-const noiseSTD = 5e-3;
+const noiseSTD = 1e-3;
 
 function convertPixelsToMeters(w, h) {
 
@@ -39,7 +45,7 @@ class Neuron {
     this.molecules = [];
     this.outgoingSignals = [];
     this.signalSign = this.isInhib ? -1 : 1;
-    this.signalStrength = 120 * 1e-3 * this.signalSign;
+    this.signalStrength = actionPotentialAmpl * this.signalSign;
     this.time = 0;
     this.firingRateHistory = [];
     this.maxHistoryLength = 500;
@@ -48,12 +54,14 @@ class Neuron {
     this.isRefractory = false;
     this.initRefractoryTime = 0.1 + Math.random() * 3;
     this.refractoryTime = 0;
+    this.refractoryPotential = refractoryPotential;
     this.refractoryPotential = 35 * 1e-3;
   }
 
   triggerRefractory() {
     this.isRefractory = true;
     this.refractoryTime = this.initRefractoryTime;
+    this.membranePotential = refractoryPotential;
   }
 
   updateRefractory() {
@@ -62,7 +70,7 @@ class Neuron {
     }
     if (this.refractoryTime <= 0) {
       this.isRefractory = false;
-      this.membranePotential = initPotential + (0.5 - Math.random()) / 1000;
+      this.membranePotential = initPotential;
     }
   }
 
@@ -131,6 +139,7 @@ class Neuron {
   }
 }
 
+
 class Signal {
   constructor(startX, startY, endX, endY, isInhibitory, targetNeuron, initPower) {
     this.startX = startX;
@@ -139,12 +148,12 @@ class Signal {
     this.endY = endY;
     this.currentX = startX;
     this.currentY = startY;
-    this.distancePassed = 0;
     this.progress = 1;
     this.isInhib = isInhibitory;
     this.initPower = initPower;
     this.distance = this.calcDistance();
-    this.speed = 1000 / this.distance + Math.random() * 2; // Adjust as needed
+    this.distancePassed = 0;
+    this.speed = signalSpeedFactor / this.distance + Math.random() * 2; // Adjust as needed
     this.finished = 0;
     this.power;
     this.targetNeuron = targetNeuron;
@@ -240,7 +249,7 @@ function getAlphaSigmoid(x, h = 0.5) {
 function drawNeuron(neuron) {
   x = neuron.x;
   y = neuron.y;
-  isFiring = neuron.isFiring;
+  let isFiring = neuron.isFiring;
   id = neuron.id;
   neuron.time += 1;
 
@@ -249,25 +258,21 @@ function drawNeuron(neuron) {
   if (isFiring) {
     alpha = 1;
   } else {
-    // alpha = -0.6 + neuron.membranePotential / potentialThreshold;
-    alpha = getAlphaSigmoid(neuron.membranePotential / potentialThreshold, h = 0.8)
+    alpha = -1.3 + (neuron.membranePotential / potentialThreshold);
+    // alpha = getAlphaSigmoid(neuron.membranePotential / potentialThreshold, h = 0)
   }
 
   let color = neuron.isInhib ? getRGBaColor('red', alpha) : getRGBaColor('blue', alpha);
 
+  ctx.beginPath();
   if (isFiring) {
-    ctx.beginPath();
-    ctx.arc(x, y, 5, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.closePath();
+    ctx.arc(x, y, 6, 0, Math.PI * 2);
   } else {
-    ctx.beginPath();
-    ctx.arc(x, y, 4, 0, Math.PI * 2);
-    ctx.fillStyle = color;
-    ctx.fill();
-    ctx.closePath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
   }
+  ctx.fillStyle = color;
+  ctx.fill();
+  ctx.closePath();
 
   ctx.font = "20px Arial";
   ctx.fillStyle = "black";
@@ -289,9 +294,10 @@ function updateSimulation(neurons) {
     // neuron.membranePotential += (((0.5 - Math.random()) / 100));
     neuron.membranePotential += gaussianRandom(1e-3, noiseSTD);
 
+    // give a random spike
     // Simulate firing with a probability based on average firing rate
     // Or the reaching of a membrane potential threshold
-    if (potentialThreshold < neuron.membranePotential) {
+    if ((potentialThreshold < neuron.membranePotential) || (Math.random() < spikeProb)) {
       if (neuron.isRefractory) {
         return;
       }
@@ -300,7 +306,7 @@ function updateSimulation(neurons) {
         neuron.triggerSignal(targetNeuron);
       });
       neuron.toggleFiring();
-      neuron.triggerRefractory()
+      neuron.triggerRefractory();
     }
 
     neuron.outgoingSignals.forEach((signal) => {
@@ -314,7 +320,7 @@ function updateSimulation(neurons) {
     signal.update();
 
     // if passed distance >= distance: call the receive() method
-    if ((signal.distancePassed >= signal.distance)) {
+    if (signal.distancePassed >= signal.distance) {
       // console.log(`${targetNeuron.id} must receive a signal ${signalStrength} strength from ${neuron.id}`);
       signal.targetNeuron.receiveSignal(signal.power);
     }
@@ -520,38 +526,49 @@ var t = 0;
 let lastChartUpdateTime = performance.now();
 let timeLabels = [];
 
-// Define a function for the simulation loop
-function simulationLoop() {
-  if (isSimulationRunning) {
+// Define a variable to hold the interval ID
+let simulationIntervalId = null;
+
+// Function to start the simulation loop
+function startSimulationLoop() {
+  // Start the simulation loop with a fixed time interval (e.g., 100 milliseconds)
+  simulationIntervalId = setInterval(() => {
+    // Update the simulation
     updateSimulation(neurons);
     updateVisualization(neurons);
     t += 1;
 
-    // chart
-    const currentTime = performance.now(); // Get the current time
-    if (drawPlot) {
-      asyncUpdateChart(currentTime, null); // Call the chart update function
+    // Update the chart asynchronously
+    if (drawPlot && t % chartInterval === 0) {
+      updateChart(t, null);
     }
-
-    // Request the next animation frame
-    requestAnimationFrame(simulationLoop);
-
-    // Request the next animation frame to continue updating the chart asynchronously
-    if (drawPlot) {
-      requestAnimationFrame(asyncUpdateChart);
-    }
-
-  }
-
+  }, 100); // Adjust the interval as needed
 }
+
+// Function to stop the simulation loop
+function stopSimulationLoop() {
+  // Clear the interval to stop the simulation loop
+  clearInterval(simulationIntervalId);
+}
+
+// Add an event listener to the button to toggle the simulation state
+const toggleSimulationBtn = document.getElementById("play");
+toggleSimulationBtn.addEventListener("click", () => {
+  if (isSimulationRunning) {
+    // Pause the simulation loop
+    stopSimulationLoop();
+    toggleSimulationBtn.textContent = "Resume Simulation";
+  } else {
+    // Resume the simulation loop
+    startSimulationLoop();
+    toggleSimulationBtn.textContent = "Pause Simulation";
+  }
+  // Toggle the simulation state flag
+  isSimulationRunning = !isSimulationRunning;
+});
 
 // Start the simulation loop
-simulationLoop();
-
-// Function to toggle the simulation state
-function toggleSimulation() {
-  isSimulationRunning = !isSimulationRunning;
-}
+startSimulationLoop();
 
 
 // Standard Normal variate using Box-Muller transform.
@@ -581,66 +598,15 @@ if (drawPlot) {
   asyncUpdateChart(t, null); // Call the chart update function asynchronously
 }
 
-// Function to update the chart with new data
-// function updateChart(time, membranePotential) {
-//   timeLabels.push(time);
 
-//   // Update the chart data
-//   const traces = neurons.map((neuron) => ({
-//     // marker: { color: neuron.isInhib ? "red" : "blue" },
-//     opacity: 0.12,
-//     // name: `Neuron ${neuron.id} membrane potential`,
-//     // x: timeLabels,
-//     y: neuron.firingRateHistory, // Initialize with an empty array
-//   }));
-
-//   const data = traces;
-
-//   // Update the chart layout if needed
-//   // const layout = { ... }; // Update layout properties as needed
-//   let layout = {
-//     autosize: false,
-//     width: chartWidth,
-//     height: chartHeight,
-//     plot_bgcolor: "black",
-//     paper_bgcolor: "#1e0f29",
-//     showlegend: false
-//   }
-//   // Plotly.react('myDiv', data, layout);
-//   Plotly.react('myDiv', data, layout = layout); // Assuming layout doesn't change
-
-//   // Optionally, update any other UI elements related to the chart
-// }
-
-
-// Define a function to resume the simulation loop
-function resumeSimulation() {
-  isSimulationRunning = true;
-  simulationLoop(); // Restart the simulation loop
+function printInfo(variable, name) {
+  let div = document.createElement("div");
+  let text = `${name}: ${variable}`;
+  div.append(text);
+  document.getElementById("visualization-container").appendChild(div);
 }
 
-// Add an event listener to the button to resume the simulation
-const resumeSimulationBtn = document.getElementById("play");
-resumeSimulationBtn.addEventListener("click", () => {
-  resumeSimulation();
-  resumeSimulationBtn.textContent = "Pause Simulation";
-});
-
-// Define a function to pause the simulation loop
-function pauseSimulation() {
-  isSimulationRunning = false;
-}
-
-// Add an event listener to the button to toggle between pausing and resuming the simulation
-const toggleSimulationBtn = document.getElementById("play");
-toggleSimulationBtn.addEventListener("click", () => {
-  if (isSimulationRunning) {
-    pauseSimulation();
-    toggleSimulationBtn.textContent = "Resume Simulation";
-  } else {
-    resumeSimulation();
-    toggleSimulationBtn.textContent = "Pause Simulation";
-  }
-});
-
+printInfo(N, "N neurons");
+printInfo(potentialThreshold, "potentialThreshold");
+printInfo(initPotential, "initPotential");
 
