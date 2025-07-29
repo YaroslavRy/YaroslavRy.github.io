@@ -11,7 +11,7 @@
  /* Add your CSS styles here */
 canvas {
     /* border: 1px solid black; */
-    background-color: #000C33;
+    background-color: #737373;
     padding: 0;
     margin: auto;
     display: block;
@@ -20,7 +20,7 @@ canvas {
 }
 
 body {
-    background-color: #000C33 !important;
+    background-color: #ffffff !important;
 }
 
 #play{
