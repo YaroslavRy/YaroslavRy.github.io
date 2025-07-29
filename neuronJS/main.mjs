@@ -1,6 +1,6 @@
 const debug = false;
 const inhibProbThreshold = 0.66;
-const N = 2 ** 7;
+const N = 2 ** 6;
 const initPotential = -80 * 1e-3;
 const potentialThreshold = -56 * 1e-3;
 const actionPotentialAmpl = 40 * 1e-3;
@@ -8,7 +8,7 @@ const restingPotential = -70 * 1e-3;
 const refractoryPotential = -90 * 1e-3;
 const connectionProbThreshold = 0;  // probability threshold to form a connection between neurons
 const lambda = 1 * 1e-3;  // distance where signal lose ~e of the strength
-const signalSpeedFactor = 4000;
+const signalSpeedFactor = 5000;
 
 const spikeProb = 0.001;
 
