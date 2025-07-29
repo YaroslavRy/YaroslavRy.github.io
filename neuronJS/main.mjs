@@ -396,8 +396,8 @@ function drawSignalLines(signal) {
 
   // Draw intermediate points
   for (let i = 1; i < numSegments; i++) {
-    const x = startX + i * dx + Math.random() * 10 * 2; // Add some randomness
-    const y = startY + i * dy + Math.random() * 10 * 2; // Add some randomness
+    const x = startX + i * dx + Math.random() * 1 * 2; // Add some randomness
+    const y = startY + i * dy + Math.random() * 1 * 2; // Add some randomness
     ctx.lineTo(x, y);
   }
 
