@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cellular Automaton — Yaroslav Ry</title>
+<link rel="icon" href="../../assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="../../css/main.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="../../index.html">yaroslav<span class="dot">.</span>lab</a>
+    <ul>
+      <li><a href="../../index.html">Specimens</a></li>
+      <li><a href="../../bio.html">Bio</a></li>
+      <li><a href="../../gallery.html">Gallery</a></li>
+      <li><a href="../../graph.html">Graph</a></li>
+      <li><a href="https://github.com/YaroslavRy">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="project-head">
+  <div class="wrap">
+    <a class="back" href="../../index.html">← back to specimens</a>
+    <h1>Cellular Automaton</h1>
+    <div class="project-meta">
+      <span>Specimen 01</span>
+      <span>Canvas 2D + jQuery</span>
+      <span>Original site's homepage, restored</span>
+    </div>
+  </div>
+</div>
+
+<section style="padding-top:var(--space-3);">
+  <div class="wrap">
+    <p class="project-notes">
+      A grid of random glyphs, redrawn every frame with a translucent fill
+      layered underneath — the trailing effect comes purely from not fully
+      clearing the canvas each pass. This was the site's original
+      "work in progress" placeholder; it's kept here as its own piece.
+    </p>
+
+    <div class="project-stage">
+      <canvas id="canvas"></canvas>
+      <div class="project-controls">
+        <label>
+          Glyph size
+          <input id="cells_slider" type="range" min="6" max="30" step="1" value="11">
+        </label>
+        <label>
+          Label overlay
+          <input id="label_toggle" type="checkbox" checked>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; width:100%;">
+    <span>© 2026</span>
+    <a href="../../index.html">← back to specimens</a>
+  </div>
+</footer>
+
+<script src="cellular.js"></script>
+<script>
+  $(document).ready(function () {
+    $('#cells_slider').on('input', function () {
+      window.cellStep = parseInt($(this).val());
+    });
+    $('#label_toggle').on('change', function () {
+      window.showLabel = $(this).is(':checked');
+    });
+  });
+</script>
+</body>
+</html>

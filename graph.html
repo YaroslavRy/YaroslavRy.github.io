@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Graph — Yaroslav Ry</title>
+<link rel="icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">yaroslav<span class="dot">.</span>lab</a>
+    <ul>
+      <li><a href="index.html">Specimens</a></li>
+      <li><a href="bio.html">Bio</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="graph.html" class="active">Graph</a></li>
+      <li><a href="https://github.com/YaroslavRy">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section style="padding-top: var(--space-5);">
+  <div class="wrap">
+    <div class="label">Knowledge graph</div>
+    <h1>Graph</h1>
+    <p style="color:var(--text-muted); max-width:64ch; margin-bottom:var(--space-3);">
+      A force-directed map of notes and how they connect — styled after
+      Obsidian's own graph view.
+    </p>
+
+    <div class="graph-banner">
+      ⚠ Showing placeholder demo data, not your real vault. Two ways to make
+      this real:<br><br>
+      <strong>1. Quick swap:</strong> edit <code>js/graph-data.js</code> by
+      hand — it's just a list of note titles and which ones link to which.<br>
+      <strong>2. From your vault:</strong> upload your Obsidian folder (or
+      just the .md files) to me in a future session and I'll write a script
+      that walks the vault, extracts <code>[[wikilinks]]</code> between
+      notes, and generates this file automatically — no manual copying.
+    </div>
+
+    <div class="graph-stage" id="graph-stage">
+      <div class="graph-tooltip" id="graph-tooltip"></div>
+    </div>
+
+    <div class="project-controls" style="margin-top:var(--space-2); border:1px solid var(--line); border-radius:var(--radius);">
+      <label>
+        Legend
+        <span style="display:flex; gap:0.9rem; flex-wrap:wrap; margin-top:0.3rem;">
+          <span style="color:#C24B86;">● sims</span>
+          <span style="color:#BAA2B7;">● concepts</span>
+          <span style="color:#8D2A61;">● meta</span>
+          <span style="color:#61295A;">● tools</span>
+        </span>
+      </label>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; width:100%;">
+    <span>© 2026</span>
+    <a href="index.html">← back to specimens</a>
+  </div>
+</footer>
+
+<script src="js/graph-data.js"></script>
+<script>
+(function () {
+  const stage = document.getElementById('graph-stage');
+  const tooltip = document.getElementById('graph-tooltip');
+  const width = stage.clientWidth;
+  const height = stage.clientHeight;
+
+  const colorByGroup = {
+    sims: '#C24B86',
+    concepts: '#BAA2B7',
+    meta: '#8D2A61',
+    tools: '#61295A',
+  };
+
+  const svg = d3.select('#graph-stage')
+    .append('svg')
+    .attr('width', '100%')
+    .attr('height', '100%')
+    .attr('viewBox', [0, 0, width, height]);
+
+  const nodes = GRAPH_DATA.nodes.map(d => Object.assign({}, d));
+  const links = GRAPH_DATA.links.map(d => Object.assign({}, d));
+
+  const simulation = d3.forceSimulation(nodes)
+    .force('link', d3.forceLink(links).id(d => d.id).distance(70).strength(0.5))
+    .force('charge', d3.forceManyBody().strength(-160))
+    .force('center', d3.forceCenter(width / 2, height / 2))
+    .force('collide', d3.forceCollide(28));
+
+  const link = svg.append('g')
+    .attr('stroke', '#5E2D6B')
+    .attr('stroke-opacity', 0.6)
+    .selectAll('line')
+    .data(links)
+    .join('line')
+    .attr('stroke-width', 1);
+
+  const node = svg.append('g')
+    .selectAll('circle')
+    .data(nodes)
+    .join('circle')
+    .attr('r', 7)
+    .attr('fill', d => colorByGroup[d.group] || '#EDE3EC')
+    .attr('stroke', '#241531')
+    .attr('stroke-width', 1.5)
+    .style('cursor', 'pointer')
+    .call(drag(simulation));
+
+  const label = svg.append('g')
+    .selectAll('text')
+    .data(nodes)
+    .join('text')
+    .text(d => d.id)
+    .attr('font-family', 'JetBrains Mono, monospace')
+    .attr('font-size', 9)
+    .attr('fill', '#8676A0')
+    .attr('dx', 10)
+    .attr('dy', 3)
+    .style('pointer-events', 'none');
+
+  node.on('mouseover', function (event, d) {
+    tooltip.textContent = d.id;
+    tooltip.style.opacity = 1;
+  }).on('mousemove', function (event) {
+    const rect = stage.getBoundingClientRect();
+    tooltip.style.left = (event.clientX - rect.left + 12) + 'px';
+    tooltip.style.top = (event.clientY - rect.top + 12) + 'px';
+  }).on('mouseout', function () {
+    tooltip.style.opacity = 0;
+  });
+
+  simulation.on('tick', () => {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+    node
+      .attr('cx', d => d.x)
+      .attr('cy', d => d.y);
+    label
+      .attr('x', d => d.x)
+      .attr('y', d => d.y);
+  });
+
+  function drag(sim) {
+    function dragstarted(event, d) {
+      if (!event.active) sim.alphaTarget(0.3).restart();
+      d.fx = d.x; d.fy = d.y;
+    }
+    function dragged(event, d) {
+      d.fx = event.x; d.fy = event.y;
+    }
+    function dragended(event, d) {
+      if (!event.active) sim.alphaTarget(0);
+      d.fx = null; d.fy = null;
+    }
+    return d3.drag()
+      .on('start', dragstarted)
+      .on('drag', dragged)
+      .on('end', dragended);
+  }
+})();
+</script>
+
+</body>
+</html>

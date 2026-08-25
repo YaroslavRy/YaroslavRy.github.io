@@ -1,74 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
-    <link href="css/styles.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
-        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bio — Yaroslav Ry</title>
+<link rel="icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
 </head>
-
 <body>
-    <div class="container">
-        <img id="image" style="display: none;" src="">
-        <canvas id="canvas"></canvas>
 
-        <!-- <script src="draw.js" style="background-color:blueviolet"></script> -->
-        
-        <script src="cellular.js" style="background-color:blueviolet"></script>
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">yaroslav<span class="dot">.</span>lab</a>
+    <ul>
+      <li><a href="index.html">Specimens</a></li>
+      <li><a href="bio.html" class="active">Bio</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="graph.html">Graph</a></li>
+      <li><a href="https://github.com/YaroslavRy">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
 
-        <div class="controls">
-            <span>
-                <label for="fontSlider">
-                    Number of cells
-                </label>
-                <input id="fontSlider" type="range" name="points" value="15" min="1" max="100" step="1" />
-                <input type="text" value="" id="value" />
-            </span>
+<section style="padding-top: var(--space-5);">
+  <div class="wrap">
+    <div class="label">About</div>
+    <h1 style="margin-bottom:var(--space-4);">Bio</h1>
 
-            <span>
-                <label for="cells_slider">
-                    Number of cells
-                </label>
-                <input id="cells_slider" type="range" value="15" min="1" max="100" step="1" />
-                <input type="text" value="" id="value_cells" />
+    <div class="bio-layout">
+      <div class="bio-portrait">
+        <!-- EDIT ME: replace with <img src="assets/portrait.jpg" alt="Yaroslav Ry"> -->
+        [ portrait placeholder — drop an image at assets/portrait.jpg ]
+      </div>
 
-            </span>
+      <div>
+        <p>
+          <!-- EDIT ME: write your real bio here. Suggested shape: who you are,
+               what you work on day-to-day, and what draws you to simulations
+               and generative systems specifically. -->
+          I'm Yaroslav — I build small computational systems for fun: cellular
+          automata, neuron simulations, particle sandboxes. This is a
+          placeholder paragraph; replace it with a couple of sentences about
+          your background, what you do, and what you're curious about.
+        </p>
+        <p>
+          <!-- EDIT ME: second paragraph — current focus, interests, or how you got here -->
+          Second paragraph goes here — current focus, what you're learning,
+          or a link to what you're working on right now.
+        </p>
 
+        <div class="label" style="margin-top:var(--space-3);">Interests / stack</div>
+        <ul class="skill-list">
+          <!-- EDIT ME: swap these for your real skills/interests -->
+          <li>JavaScript</li>
+          <li>Cellular automata</li>
+          <li>Computational neuroscience</li>
+          <li>Canvas / WebGL</li>
+          <li>Obsidian / PKM</li>
+        </ul>
 
-        </div>
-
+        <div class="label" style="margin-top:var(--space-3);">Elsewhere</div>
+        <p style="margin-top:0.4rem;">
+          <a href="https://github.com/YaroslavRy">GitHub</a>
+          <!-- EDIT ME: add more links — email, LinkedIn, Twitter/X, etc. -->
+          &nbsp;·&nbsp; <a href="mailto:you@example.com">Email</a>
+        </p>
+      </div>
     </div>
-    <script>
-        $(document).ready(function () {
-            var Values = $("#fontSlider").val();
-            $("#value").val(Values);
-            $("#fontSlider").change(
-                function () {
-                    var Values = $("#fontSlider").val();
-                    $("#value").val(Values);
-                }
-            );
+  </div>
+</section>
 
-            var cellsValue = $("#cells_slider").val();
-            $("#value_cells").val(cellsValue);
-            $("#cells_slider").change(
-                function () {
-                    var cellsValue = $("#cells_slider").val();
-                    $("#value_cells").val(cellsValue);
-                }
-            );
-        });
-
-
-    </script>
+<footer class="site-footer">
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; width:100%;">
+    <span>© 2026</span>
+    <a href="index.html">← back to specimens</a>
+  </div>
+</footer>
 
 </body>
-
 </html>

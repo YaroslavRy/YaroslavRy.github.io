@@ -1,103 +1,145 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
-
-    <title>Work in progress – Demo</title>
-
-    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/">
-
-    <!-- Bootstrap core CSS -->
-    <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom styles for this template -->
-    <link href="css/styles.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-3.6.1.min.js"
-        integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.3.2/math.js"></script>
-
-</head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Yaroslav Ry — Specimen Lab</title>
+<meta name="description" content="A lab notebook of computational experiments — cellular automata, neuron simulations, and small physics sketches.">
+<link rel="icon" href="assets/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-129QRHXWWJ"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-129QRHXWWJ');
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-129QRHXWWJ');
 </script>
-
+</head>
 <body>
 
-    <header>
-        <!-- Fixed navbar -->
-        <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-            <a class="navbar-brand" href="#">Home</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
-                aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="neuronJS/index.html">NeuronSimJS</a>
-                    </li>
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">yaroslav<span class="dot">.</span>lab</a>
+    <ul>
+      <li><a href="index.html" class="active">Specimens</a></li>
+      <li><a href="bio.html">Bio</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
+      <li><a href="graph.html">Graph</a></li>
+      <li><a href="https://github.com/YaroslavRy">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
 
-                </ul>
+<header class="hero">
+  <canvas data-matrix-bg></canvas>
+  <div class="hero-inner wrap">
+    <div class="label">Lab notebook — computational experiments</div>
+    <h1>Small simulations,<br>watched closely.</h1>
+    <p class="lede">
+      I build tiny worlds out of rules — cells that live and die, particles
+      that collide, neurons that fire. This is where they're catalogued.
+      <!-- EDIT ME: swap in your own one-line pitch if you'd like something more personal -->
+    </p>
+    <div class="hero-scroll-cue">↓ scroll for the specimen catalog</div>
+  </div>
+</header>
 
-
-            </div>
-        </nav>
-
-    </header>
-
-
-    <div class="container">
-
+<section id="specimens">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="label">Catalog</div>
+      <h2>Specimens</h2>
+      <p>Each card runs a live, simplified version of the real simulation. Open one to see the full version.</p>
     </div>
 
+    <div class="specimen-grid">
 
-    <!-- Begin page content -->
-    <main role="main" class="container">
+      <div class="specimen">
+        <a href="projects/cellular-automaton/index.html">
+          <div class="specimen-preview">
+            <canvas data-preview="cellular-automaton"></canvas>
+          </div>
+          <div class="specimen-body">
+            <div class="label">Specimen 01</div>
+            <h3>Cellular Automaton</h3>
+            <p>A grid of glyphs that mutate on every frame — the site's original "work in progress" screen, now a proper piece.</p>
+            <span class="specimen-link">Open specimen</span>
+          </div>
+        </a>
+      </div>
 
-        <canvas id="canvas"></canvas>
+      <div class="specimen">
+        <a href="projects/minefield/index.html">
+          <div class="specimen-preview">
+            <canvas data-preview="minefield"></canvas>
+          </div>
+          <div class="specimen-body">
+            <div class="label">Specimen 02</div>
+            <h3>Minefield</h3>
+            <p>A minesweeper variant where neighbor counts are computed with 2D convolution instead of manual loops. Click a cell to reveal it.</p>
+            <span class="specimen-link">Open specimen</span>
+          </div>
+        </a>
+      </div>
 
-        <!-- <script src="draw.js" style="background-color:blueviolet"></script> -->
-        <script src="cellular.js" style="background-color:blueviolet"></script>
+      <div class="specimen">
+        <a href="projects/bouncing-balls/index.html">
+          <div class="specimen-preview">
+            <canvas data-preview="bouncing-balls"></canvas>
+          </div>
+          <div class="specimen-body">
+            <div class="label">Specimen 03</div>
+            <h3>Bouncing Balls</h3>
+            <p>A small elastic-collision sandbox — mostly an excuse to play with velocity and restitution.</p>
+            <span class="specimen-link">Open specimen</span>
+          </div>
+        </a>
+      </div>
 
-        <!-- <div class="controls"> </div> -->
-        <hr>
+      <div class="specimen">
+        <a href="neuronJS/index.html">
+          <div class="specimen-preview">
+            <canvas data-preview="neuron-sim"></canvas>
+          </div>
+          <div class="specimen-body">
+            <div class="label">Specimen 04</div>
+            <h3>Neuron Sim</h3>
+            <p>A network of simulated neurons with excitatory/inhibitory connections, spiking in real time.</p>
+            <span class="specimen-link">Open specimen</span>
+          </div>
+        </a>
+      </div>
 
+    </div>
+  </div>
+</section>
 
+<section id="about-teaser" style="border-top:1px solid var(--line);">
+  <div class="wrap" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1.5rem;">
+    <div>
+      <div class="label">Also on this site</div>
+      <h2 style="margin-bottom:0;">Bio, gallery, and a knowledge graph</h2>
+    </div>
+    <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+      <a class="btn" href="bio.html">Read bio</a>
+      <a class="btn" href="gallery.html">View gallery</a>
+      <a class="btn" href="graph.html">Explore graph</a>
+    </div>
+  </div>
+</section>
 
-    </main>
+<footer class="site-footer">
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; width:100%;">
+    <span>© 2026 · built as a lab notebook, not a resume</span>
+    <a href="https://github.com/YaroslavRy">github.com/YaroslavRy</a>
+  </div>
+</footer>
 
-    <footer class="footer">
-        <div class="container">
-            <!-- <span class="text-muted"><a href="https://github.com/YaroslavRy">https://github.com/YaroslavRy</a></span> -->
-            <span>
-                <a href="https://github.com/YaroslavRy">github.com/YaroslavRy</a>
-            </span>
-        </div>
-    </footer>
-
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
-        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-        crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-    <script src="../../assets/js/vendor/popper.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
+<script src="js/matrix-bg.js"></script>
+<script src="js/previews.js"></script>
 </body>
-
 </html>

@@ -1,54 +1,175 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neuron Visualization</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-    <script src='https://cdn.plot.ly/plotly-2.27.0.min.js'></script>
-
-    <!-- Bootstrap core CSS -->
-    <link href="https://getbootstrap.com/docs/5.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neuron Sim — Yaroslav Ry</title>
+<link rel="icon" href="../assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="../css/main.css" rel="stylesheet">
 </head>
 
-
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-129QRHXWWJ"></script>
 <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'G-129QRHXWWJ');
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+  gtag('config', 'G-129QRHXWWJ');
 </script>
 
 <body>
 
-    <div class="container">
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="../index.html">yaroslav<span class="dot">.</span>lab</a>
+    <ul>
+      <li><a href="../index.html">Specimens</a></li>
+      <li><a href="../bio.html">Bio</a></li>
+      <li><a href="../gallery.html">Gallery</a></li>
+      <li><a href="../graph.html">Graph</a></li>
+      <li><a href="https://github.com/YaroslavRy">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
 
+<div class="project-head">
+  <div class="wrap">
+    <a class="back" href="../index.html">← back to specimens</a>
+    <h1>Neuron Sim</h1>
+    <div class="project-meta">
+      <span>Specimen 04</span>
+      <span>WebGL · gl.POINTS</span>
+      <span>Leaky integrate-and-fire · sparse connectivity</span>
+    </div>
+  </div>
+</div>
 
-        <div id="main-viz-cont">
+<section style="padding-top:var(--space-3);">
+  <div class="wrap">
+    <p class="project-notes">
+      Every point is a neuron: it leaks charge toward rest, occasionally
+      fires on its own, and — once it crosses threshold — kicks a set of
+      other neurons. In <strong>realistic mode</strong> those connections are
+      distance-based: nearby neurons are more likely to be linked, connection
+      strength decays with distance, and the signal takes longer to arrive
+      the farther it travels — same idea as the original simulation, just
+      accelerated with a spatial grid so it still runs at thousands of
+      neurons instead of dozens. <strong>Random mode</strong> is a control
+      condition: same neuron count, but every connection target is picked
+      uniformly at random anywhere in the population, delivered instantly.
+      Switch between them below and watch the raster and phase portrait
+      change shape.
+    </p>
 
-            <div class="row" style="display: flex;">
-
-                <div class="col-xs-6">
-                    <div id="visualization-container">
-                        <div id='myDiv'><!-- Plotly chart will be drawn inside this DIV --></div>
-
-                    </div>
-                    <button type="button" class="btn btn-primary" id="play">Pause simulation</button>
-                </div>
-
-                <script src="main.mjs"></script>
-            </div>
+    <div class="project-stage">
+      <canvas id="sim-canvas" style="height:440px;"></canvas>
+      <div class="project-controls">
+        <div class="field-row">
+          <label>Connectivity</label>
+          <div class="mode-switch">
+            <button id="mode-distance" class="active">Realistic (distance)</button>
+            <button id="mode-random">Random (control)</button>
+          </div>
         </div>
+        <div class="field-row">
+          <label for="count-slider">Neurons</label>
+          <input id="count-slider" type="range" min="50" max="5000" step="50" value="400">
+          <output id="count-out">400</output>
+        </div>
+        <div class="field-row">
+          <label for="noise-slider">Spontaneity</label>
+          <input id="noise-slider" type="range" min="0" max="60" step="1" value="15">
+          <output id="noise-out">0.0015</output>
+        </div>
+        <div class="field-row">
+          <label for="k-slider">Avg degree</label>
+          <input id="k-slider" type="range" min="2" max="30" step="1" value="12">
+          <output id="k-out">12</output>
+        </div>
+        <button class="btn primary" id="play-btn">Pause</button>
+        <button class="btn" id="reset-btn">Reset</button>
+      </div>
     </div>
 
+    <div class="sim-panels">
+      <div class="sim-panel">
+        <div class="label">Firing-rate heatmap</div>
+        <canvas id="heatmap-canvas"></canvas>
+      </div>
+      <div class="sim-panel">
+        <div class="label">Spike raster (time →)</div>
+        <canvas id="raster-canvas" width="600" height="140"></canvas>
+      </div>
+      <div class="sim-panel">
+        <div class="label">Phase portrait (activity vs Δactivity)</div>
+        <canvas id="phase-canvas" width="400" height="140"></canvas>
+      </div>
+    </div>
 
+    <p class="project-notes" style="margin-top:var(--space-3); font-size:0.85rem;">
+      The phase portrait plots population spiking activity against its
+      rate of change, one dot per frame, with old dots fading — this is
+      what makes it possible to <em>see</em> the dynamics rather than just
+      the raw spikes. Distance-based connectivity tends to produce tighter,
+      more structured loops (local clusters syncing up); fully random
+      connectivity tends to look noisier and less organized, since there's
+      no spatial structure for activity to travel coherently through.
+    </p>
+  </div>
+</section>
 
+<footer class="site-footer">
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; width:100%;">
+    <span>© 2026</span>
+    <a href="../index.html">← back to specimens</a>
+  </div>
+</footer>
+
+<script src="sim.js"></script>
+<script>
+  initNeuronSim({ main: '#sim-canvas', heatmap: '#heatmap-canvas', raster: '#raster-canvas', phase: '#phase-canvas' });
+
+  const distBtn = document.getElementById('mode-distance');
+  const randBtn = document.getElementById('mode-random');
+  function setModeUI(m) {
+    distBtn.classList.toggle('active', m === 'distance');
+    randBtn.classList.toggle('active', m === 'random');
+  }
+  distBtn.addEventListener('click', () => { NeuronSim.setMode('distance'); setModeUI('distance'); });
+  randBtn.addEventListener('click', () => { NeuronSim.setMode('random'); setModeUI('random'); });
+
+  const countSlider = document.getElementById('count-slider');
+  const countOut = document.getElementById('count-out');
+  countSlider.addEventListener('change', () => {
+    NeuronSim.setCount(countSlider.value);
+    countOut.textContent = countSlider.value;
+  });
+  countSlider.addEventListener('input', () => { countOut.textContent = countSlider.value; });
+
+  const noiseSlider = document.getElementById('noise-slider');
+  const noiseOut = document.getElementById('noise-out');
+  function noiseFromSlider(v) { return (v / 60) * 0.006; }
+  noiseSlider.addEventListener('input', () => {
+    const val = noiseFromSlider(noiseSlider.value);
+    NeuronSim.setNoise(val);
+    noiseOut.textContent = val.toFixed(4);
+  });
+
+  const kSlider = document.getElementById('k-slider');
+  const kOut = document.getElementById('k-out');
+  kSlider.addEventListener('change', () => {
+    NeuronSim.setDegree(kSlider.value);
+    kOut.textContent = kSlider.value;
+  });
+  kSlider.addEventListener('input', () => { kOut.textContent = kSlider.value; });
+
+  const playBtn = document.getElementById('play-btn');
+  playBtn.addEventListener('click', () => {
+    const isRunning = NeuronSim.togglePlay();
+    playBtn.textContent = isRunning ? 'Pause' : 'Play';
+  });
+
+  document.getElementById('reset-btn').addEventListener('click', () => NeuronSim.reset());
+</script>
 </body>
-
 </html>
