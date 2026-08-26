@@ -1,0 +1,88 @@
+/*
+  Design tokens — "Specimen Lab" identity
+  Palette derived from the site's original retro palette
+  (colorswall.com/palette/4968), extended for contrast + accents.
+*/
+:root {
+  /* Core palette */
+  --bg-deep:      #241531;   /* darkest layer, canvas backgrounds */
+  --bg-base:      #3F2855;   /* page background */
+  --surface:      #482E61;   /* cards, panels */
+  --surface-hi:   #61295A;   /* hovered / active surface */
+  --line:         #5E2D6B;   /* borders, dividers */
+  --accent:       #C24B86;   /* primary accent — warmed the magenta for contrast */
+  --accent-dim:   #8D2A61;   /* secondary accent, used sparingly */
+  --text:         #EDE3EC;   /* primary text, near-white for legibility */
+  --text-muted:   #BAA2B7;   /* secondary text, original mauve */
+  --text-faint:   #8676A0;   /* tertiary / captions */
+
+  /* Type */
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-body:    'Inter', system-ui, sans-serif;
+  --font-mono:    'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+
+  /* Scale */
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.75rem;
+  --space-4: 3rem;
+  --space-5: 5rem;
+
+  --radius: 3px; /* sharp, lab-instrument feel — not soft/rounded */
+  --max-width: 1080px;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+
+body {
+  margin: 0;
+  background: var(--bg-base);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--bg-deep);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.15;
+  margin: 0 0 var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+code, .mono {
+  font-family: var(--font-mono);
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
