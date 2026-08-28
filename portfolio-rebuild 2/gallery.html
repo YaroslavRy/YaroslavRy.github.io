@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gallery — Yaroslav Ry</title>
+<link rel="icon" href="assets/favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a class="brand" href="index.html">yaroslav<span class="dot">.</span>lab</a>
+    <ul>
+      <li><a href="index.html">Specimens</a></li>
+      <li><a href="bio.html">Bio</a></li>
+      <li><a href="gallery.html" class="active">Gallery</a></li>
+      <li><a href="graph.html">Graph</a></li>
+      <li><a href="https://corvie.ai" target="_blank" rel="noopener">Blog</a></li>
+      <li><a href="https://github.com/YaroslavRy">GitHub</a></li>
+    </ul>
+  </div>
+</nav>
+
+<section style="padding-top: var(--space-5);">
+  <div class="wrap">
+    <div class="label">Visuals</div>
+    <h1>Gallery</h1>
+    <p style="color:var(--text-muted); max-width:60ch; margin-bottom:var(--space-4);">
+      Renders, screenshots, and stills from the simulations above — or anything
+      else worth a picture.
+    </p>
+
+    <!--
+      HOW TO ADD IMAGES:
+      1. Drop image files into /assets/gallery/
+      2. Duplicate a <figure> block below, point the src at your file,
+         and write a caption.
+      3. Delete the .gallery-empty placeholder block once you've added images.
+    -->
+
+    <div class="gallery-grid" id="gallery-grid">
+      <!-- EDIT ME: example entries — replace src + caption, add more, or delete -->
+      <!--
+      <figure>
+        <img src="assets/gallery/automaton-01.png" alt="">
+        <figcaption>Cellular automaton, generation 480</figcaption>
+      </figure>
+      -->
+    </div>
+
+    <div class="gallery-empty" id="gallery-empty">
+      No images yet — add files to <code>assets/gallery/</code> and list them here.
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap" style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; width:100%;">
+    <span>© 2026</span>
+    <a href="index.html">← back to specimens</a>
+  </div>
+</footer>
+
+<script>
+  // Hides the empty-state message automatically once real <figure> entries exist.
+  const grid = document.getElementById('gallery-grid');
+  const empty = document.getElementById('gallery-empty');
+  if (grid.querySelector('figure')) empty.style.display = 'none';
+</script>
+
+</body>
+</html>
