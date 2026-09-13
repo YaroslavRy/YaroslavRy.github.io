@@ -1,333 +1,168 @@
-$(function () {
-    var gameStatus = 1;
+/* 14×14 Minesweeper. Neighbor counts use a zero-padded 3×3 convolution. */
+(function () {
+  'use strict';
 
-    Array.prototype.reshape = function (rows, cols) {
-        var copy = this.slice(0); // Copy all elements.
-        this.length = 0; // Clear out existing array.
-
-        for (var r = 0; r < rows; r++) {
-            var row = [];
-            for (var c = 0; c < cols; c++) {
-                var i = r * cols + c;
-                if (i < copy.length) {
-                    row.push(copy[i]);
-                }
-            }
-            this.push(row);
-        };
-    };
-
-    function shuffleArray(array) {
-        for (var i = array.length - 1; i > 0; i--) {
-            var j = Math.floor(Math.random() * (i + 1));
-            var temp = array[i];
-            array[i] = array[j];
-            array[j] = temp;
-        }
-        return array
-    };
-
-    const kernel = [
-        [1, 1, 1],
-        [1, 0, 1],
-        [1, 1, 1],
-    ];
-
-    function uniform_array(len, value) {
-        let arr = new Array(len); for (let i = 0; i < len; ++i) arr[i] = Array.isArray(value) ? [...value] : value;
-        return arr;
+  class Minefield {
+    constructor(random = Math.random) {
+      this.random = random;
+      this.size = 14;
+      this.mineCount = 26;
+      this.reset();
     }
 
-    function conv_2d(kernel, array) {
-        var result = uniform_array(array.length, uniform_array(array[0].length, 0));
-        var kRows = kernel.length;
-        var kCols = kernel[0].length;
-        var rows = array.length;
-        var cols = array[0].length;
-        // find center position of kernel (half of kernel size)
-        var kCenterX = Math.floor(kCols / 2);
-        var kCenterY = Math.floor(kRows / 2);
-        var i, j, m, n, ii, jj;
-
-        for (i = 0; i < rows; ++i) {          // for all rows
-            for (j = 0; j < cols; ++j) {          // for all columns
-                for (m = 0; m < kRows; ++m) {         // for all kernel rows
-                    for (n = 0; n < kCols; ++n) {        // for all kernel columns
-                        // index of input signal, used for checking boundary
-                        ii = i + (m - kCenterY);
-                        jj = j + (n - kCenterX);
-                        // ignore input samples which are out of bound
-                        if (ii >= 0 && ii < rows && jj >= 0 && jj < cols) {
-                            result[i][j] += array[ii][jj] * kernel[m][n];
-                        };
-                    };
-                };
-            };
-        };
-        return result;
-    };
-
-    function getRandomInt(max) {
-        return Math.floor(Math.random() * max);
+    reset() {
+      this.cells = Array.from({ length: this.size ** 2 }, () => ({
+        mine: false, count: 0, revealed: false, flagged: false,
+      }));
+      this.state = 'ready';
+      this.revealed = 0;
+      this.flags = 0;
     }
 
-    function sleep(ms) {
-        return new Promise(resolve => setTimeout(resolve, ms));
+    neighbors(index) {
+      const row = Math.floor(index / this.size), col = index % this.size;
+      const result = [];
+      for (let dy = -1; dy <= 1; dy++) {
+        for (let dx = -1; dx <= 1; dx++) {
+          const y = row + dy, x = col + dx;
+          if ((dx || dy) && y >= 0 && y < this.size && x >= 0 && x < this.size) {
+            result.push(y * this.size + x);
+          }
+        }
+      }
+      return result;
     }
 
-
-    class landMines {
-        constructor() {
-            this.nCells = 0;
-            this.mines = {};
-            this.matrix = math.matrix();
-            this.neigbs = [];
-            this.totalVisbileCells = 0;
-            this.currentSaveCells = 0;
-            this.totalBombs = 0;
-        }
-
-        addMine(mine) {
-            this.mines[mine.id] = mine;
-            this.nCells++;
-            this.totalBombs = this.totalBombs + mine.bomb;
-        }
-
-        get nSaveCells() {
-            return this.totalSaveCells
-        }
-
-        get nCurrentSaveCells() {
-            return this.currentSaveCells;
-        }
-
-        calcDist(x1, y1, x2, y2) {
-            return Math.hypot(x2 - x1, y2 - y1)
-        }
-
-        fillNeighbours(neigbs) {
-            this.neigbs = neigbs;
-            for (var i = 0; i < neigbs.length; i++) {
-                for (var j = 0; j < neigbs.length; j++) {
-                    let curMine = this.mines[`${i};${j}`];
-                    // // console.log('curMine', curMine, this.mines);
-                    let nNeighb = this.neigbs[i][j];
-                    if (nNeighb === 0) {
-                        curMine.makeVisible();
-                    } else {
-                        ctx.font = "600 13px 'JetBrains Mono', monospace";
-                        ctx.fillStyle = '#EDE3EC';
-                        ctx.textAlign = 'center';
-                        ctx.textBaseline = 'middle';
-                        ctx.fillText(nNeighb, curMine.x, curMine.y);
-                    }
-                }
-            }
-        }
-
-        fillFieldMatrix(m) {
-            this.matrix = m;
-        }
-
-        checkClicked(e) {
-            if (gameStatus === 0) {
-                return;
-            }
-            // Convert page-space click coordinates into canvas-local
-            // coordinates. The original code compared e.pageX/pageY directly
-            // against canvas-local mine positions, which only works if the
-            // canvas sits at the page's top-left corner with no scaling —
-            // never true once this is embedded in a real page.
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-            var cursorX = (e.clientX - rect.left) * scaleX;
-            var cursorY = (e.clientY - rect.top) * scaleY;
-
-            // // console.log({ 'x': cursorX, 'y': cursorY });
-            for (const [key, value] of Object.entries(this.mines)) {
-                // // // console.log(key, value.x, value.y, value.width);
-                let curMine = this.mines[key];
-                let distance = this.calcDist(value.x, value.y, cursorX, cursorY);
-                // // // console.log('distance', distance, '2r', 2*value.radius);
-                if (distance < (value.radius)) {
-
-                    let promise = new Promise(function (resolve, reject) {
-                        setTimeout(() => resolve(1), 150);
-
-                    });
-                    promise.then(function (result) {
-                        curMine.detonate();
-                        if (curMine.status === 'dead') {
-                            gameStatus = 0;
-                            ctx.font = "600 1.6em 'Space Grotesk', sans-serif";
-                            ctx.fillStyle = '#EDE3EC';
-                            ctx.textAlign = 'center';
-                            ctx.textBaseline = 'middle';
-                            ctx.fillText('boom', canvasWidth / 2, canvasHeight / 2);
-                        }
-                    });
-
-                }
-            }
-        }
-
+    placeMines(first) {
+      // Keep the first cell and its neighbors clear, giving a safe opening.
+      const excluded = new Set([first, ...this.neighbors(first)]);
+      const candidates = this.cells.map((_, i) => i).filter(i => !excluded.has(i));
+      for (let i = candidates.length - 1; i > 0; i--) {
+        const j = Math.floor(this.random() * (i + 1));
+        [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+      }
+      for (const i of candidates.slice(0, this.mineCount)) this.cells[i].mine = true;
+      // Kernel [1,1,1; 1,0,1; 1,1,1], with zero padding at board edges.
+      this.cells.forEach((cell, i) => {
+        cell.count = this.neighbors(i).reduce((sum, j) => sum + Number(this.cells[j].mine), 0);
+      });
+      this.state = 'playing';
     }
 
-    class Mine {
-        constructor(id, height, width, x, y, bomb, c) {
-            this.id = id;
-            this.height = height;
-            this.width = width;
-            this.bomb = bomb
-            this.x = x;
-            this.y = y;
-            this.radius = (height / 2) * 0.72; // leave a visible gap between cells for a thinner, more compact grid
-            this.draw();
-            this.c = c;
-            this.status = 'alive';
-        }
-
-        get isBomb() {
-            return this.bomb
-        }
-
-        makeVisible() {
-            let stroke = '#5E2D6B';
-            let fill = 'rgba(72, 46, 97, 0.35)';
-            if (this.isBomb) {
-                stroke = '#C24B86';
-                fill = 'rgba(194, 75, 134, 0.18)';
-            }
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-            ctx.fillStyle = fill;
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = stroke;
-            ctx.stroke();
-            if (this.isBomb) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 0.22, 0, 2 * Math.PI, false);
-                ctx.fillStyle = '#C24B86';
-                ctx.fill();
-            }
-        }
-
-        detonate() {
-            let stroke = '#5E2D6B';
-            let fill = 'rgba(72, 46, 97, 0.35)';
-            if (this.isBomb) {
-                stroke = '#C24B86';
-                fill = 'rgba(194, 75, 134, 0.28)';
-                this.status = 'dead';
-            }
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-            ctx.fillStyle = fill;
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = stroke;
-            ctx.stroke();
-            if (this.isBomb) {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius * 0.22, 0, 2 * Math.PI, false);
-                ctx.fillStyle = '#C24B86';
-                ctx.fill();
-            }
-        }
-
-        draw() {
-            ctx.beginPath();
-            ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
-            ctx.fillStyle = 'rgba(97, 41, 90, 0.4)';
-            ctx.fill();
-            ctx.lineWidth = 1;
-            ctx.strokeStyle = '#5E2D6B';
-            ctx.stroke();
-        }
+    reveal(index) {
+      const cell = this.cells[index];
+      if (!cell || cell.revealed || cell.flagged || ['won', 'lost'].includes(this.state)) return;
+      if (this.state === 'ready') this.placeMines(index);
+      if (cell.mine) {
+        cell.revealed = true;
+        this.state = 'lost';
+        return;
+      }
+      const pending = [index];
+      while (pending.length) {
+        const i = pending.pop(), next = this.cells[i];
+        if (next.revealed || next.flagged || next.mine) continue;
+        next.revealed = true;
+        this.revealed++;
+        if (next.count === 0) pending.push(...this.neighbors(i));
+      }
+      if (this.revealed === this.cells.length - this.mineCount) this.state = 'won';
     }
 
+    toggleFlag(index) {
+      const cell = this.cells[index];
+      if (!cell || cell.revealed || ['won', 'lost'].includes(this.state)) return;
+      if (!cell.flagged && this.flags >= this.mineCount) return;
+      cell.flagged = !cell.flagged;
+      this.flags += cell.flagged ? 1 : -1;
+    }
+  }
 
-    const canvas = document.getElementById('canvas');
-    var ctx = canvas.getContext("2d");
-    var mineField = new landMines();
+  // The same model runs in the browser and in deterministic Node tests.
+  if (typeof module !== 'undefined' && module.exports) module.exports = Minefield;
+  if (typeof document === 'undefined') return;
 
-    canvas.addEventListener('click', function handleClick(event) {
-        mineField.checkClicked(event);
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const status = document.getElementById('game-status');
+  const flagButton = document.getElementById('flag-mode');
+  const game = new Minefield();
+  const size = 500, cellSize = size / game.size;
+  let flagMode = false;
+
+  function draw() {
+    ctx.fillStyle = '#241531';
+    ctx.fillRect(0, 0, size, size);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = "600 15px 'JetBrains Mono', monospace";
+    game.cells.forEach((cell, i) => {
+      const x = (i % game.size + 0.5) * cellSize;
+      const y = (Math.floor(i / game.size) + 0.5) * cellSize;
+      const showMine = cell.mine && game.state === 'lost';
+      ctx.beginPath();
+      ctx.arc(x, y, cellSize * 0.39, 0, Math.PI * 2);
+      ctx.fillStyle = showMine ? '#8D2A61' : cell.revealed ? '#30203F' : '#61295A';
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = cell.revealed ? '#482E61' : '#BAA2B7';
+      ctx.stroke();
+      ctx.fillStyle = '#EDE3EC';
+      if (showMine) {
+        ctx.beginPath();
+        ctx.arc(x, y, cellSize * 0.12, 0, Math.PI * 2);
+        ctx.fill();
+      } else if (cell.flagged) {
+        ctx.fillText('⚑', x, y);
+      } else if (cell.revealed && cell.count) {
+        ctx.fillText(cell.count, x, y);
+      }
     });
+    const remaining = game.mineCount - game.flags;
+    status.textContent = game.state === 'lost' ? 'Mine hit. Start a new game.'
+      : game.state === 'won' ? 'You won — all safe cells cleared.'
+      : game.state === 'ready' ? '26 mines · Click a cell to start.'
+      : `${remaining} mines unflagged · ${game.revealed}/170 safe cells cleared`;
+  }
 
-    canvasWidth = canvas.width = 500;
-    canvasHeight = canvas.height = 500;
+  function resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = size * dpr;
+    canvas.height = size * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    draw();
+  }
 
-    ctx.fillStyle = "#241531";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  function indexAt(event) {
+    const rect = canvas.getBoundingClientRect();
+    const col = Math.floor((event.clientX - rect.left) / rect.width * game.size);
+    const row = Math.floor((event.clientY - rect.top) / rect.height * game.size);
+    return row >= 0 && row < game.size && col >= 0 && col < game.size
+      ? row * game.size + col : -1;
+  }
 
-    function rndMinesCoor(rows, nMines) {
-        let size = rows * rows;
-        let maxProportion = 0.85;
-        let curProportion = nMines / size;
-        if ((size < nMines) || (maxProportion < curProportion)) {
-            throw new Error(`size >> nMines. Max proportions nMines/nCells must be greater than ${maxProportion}`);
-        }
-        let arr = new Array(size).fill(0);
-        arr.reshape(rows, rows);
-        // // console.log(arr);
-        var totalMines = 0;
-
-        for (var i = 0; i < rows; i++) {
-            for (var j = 0; j < rows; j++) {
-                let r = Math.floor(Math.random() * 2);
-                if ((r === 1) && (totalMines < nMines)) {
-                    arr[i][j] = r;
-                    totalMines++;
-                    // console.log('totalMines', totalMines, nMines, totalMines < nMines);
-                }
-            }
-        }
-
-        shuffleArray(arr.flat()).reshape(rows, rows)
-        return arr
-
-    }
-
-    function populateMineField(nRows, nMines) {
-        let bubbleSize = parseInt(canvasWidth / nRows);
-        let bubleRadius = bubbleSize / 2;
-        let rows = [];
-        let minesCoordArr = rndMinesCoor(nRows, nMines);
-        for (var i = 0; i < nRows; i++) {
-            let curCol = [];
-            for (var j = 0; j < nRows; j++) {
-                let rndInt = minesCoordArr[i][j];
-                let x = bubleRadius + (j * bubleRadius * 2);
-                let y = bubleRadius + (i * bubleRadius * 2);
-                let mine = new Mine(id = `${i};${j}`, height = bubbleSize, widht = bubbleSize, x = x, y = y, bomb = rndInt, c = ctx);
-                mineField.addMine(mine);
-                curCol.push(mine.bomb);
-            }
-            rows.push(curCol);
-        }
-
-        mineField.fillFieldMatrix(rows);
-
-        // cals neighbours with convolution
-        let convRes = conv_2d(kernel, mineField.matrix);
-
-        mineField.fillNeighbours(convRes);
-
-    }
-
-    populateMineField(nRows = 14, nMines = 26);
-
-    window.restartMinefield = function () {
-        gameStatus = 1;
-        mineField = new landMines();
-        ctx.fillStyle = "#241531";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        populateMineField(14, 26);
-    };
-}
-);
-
-
+  canvas.addEventListener('click', event => {
+    if (flagMode) game.toggleFlag(indexAt(event));
+    else game.reveal(indexAt(event));
+    draw();
+  });
+  canvas.addEventListener('contextmenu', event => {
+    event.preventDefault();
+    game.toggleFlag(indexAt(event));
+    draw();
+  });
+  flagButton.addEventListener('click', () => {
+    flagMode = !flagMode;
+    flagButton.setAttribute('aria-pressed', String(flagMode));
+    flagButton.textContent = flagMode ? 'Flag mode: on' : 'Flag mode: off';
+  });
+  window.restartMinefield = function () {
+    game.reset();
+    flagMode = false;
+    flagButton.setAttribute('aria-pressed', 'false');
+    flagButton.textContent = 'Flag mode: off';
+    draw();
+  };
+  window.addEventListener('resize', resize);
+  resize();
+})();

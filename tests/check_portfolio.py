@@ -20,7 +20,9 @@ with sync_playwright() as p:
   if 'minefield' in path:
    assert page.locator('#canvas').bounding_box()['width']<=500
    page.locator('#canvas').click(position={'x':125,'y':125})
+   assert 'safe cells cleared' in page.locator('#game-status').inner_text()
    page.get_by_text('New game').click()
+   assert 'Click a cell to start' in page.locator('#game-status').inner_text()
   if 'neuronJS' in path:
    assert page.evaluate('!!window.NeuronSim')
    for name,value in [('tau','40'),('threshold','0.5'),('refractory','12'),('strength','2')]:
