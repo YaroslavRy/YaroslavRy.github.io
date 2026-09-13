@@ -94,7 +94,7 @@ section { padding: var(--space-5) 0; }
 /* ---------- Specimen grid (project cards) ---------- */
 .specimen-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: 1fr;
   gap: var(--space-3);
 }
 .specimen {
@@ -117,6 +117,8 @@ section { padding: var(--space-5) 0; }
   overflow: hidden;
 }
 .specimen-preview canvas {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
@@ -144,7 +146,16 @@ section { padding: var(--space-5) 0; }
 }
 .specimen-link::after { content: '→'; transition: transform 0.15s ease; }
 .specimen:hover .specimen-link::after { transform: translateX(3px); }
-.specimen > a { color: inherit; text-decoration: none; display: contents; }
+.specimen > a {
+  color: inherit;
+  text-decoration: none;
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  align-items: start;
+}
+.specimen-preview { aspect-ratio: 2 / 1; }
+.specimen-body { padding: var(--space-3); }
+#specimens { padding: var(--space-3) 0; }
 
 /* ---------- Project detail page ---------- */
 .project-head {
@@ -186,6 +197,29 @@ section { padding: var(--space-5) 0; }
 }
 .project-controls label { display: flex; flex-direction: column; gap: 0.3rem; color: var(--text-muted); }
 .project-notes { color: var(--text-muted); max-width: 65ch; }
+.project-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+.project-main, .project-description { min-width: 0; }
+.project-layout .project-stage { margin: 0; }
+.project-description p:first-child { margin-top: 0; }
+.project-description h2 { font-size: 1.1rem; }
+.project-description { font-size: 0.9rem; }
+.project-description .katex-display { overflow-x: auto; overflow-y: hidden; }
+.minefield-stage { width: min(100%, 500px); }
+#sim-canvas { height: 360px; }
+.project-main .sim-panels { grid-template-columns: 1fr; }
+.project-main .field-row { flex-wrap: wrap; }
+
+@media (max-width: 700px) {
+  .project-layout, .specimen > a { grid-template-columns: 1fr; }
+  .site-nav .wrap { height: auto; min-height: 60px; flex-wrap: wrap; gap: 0.5rem; padding-top: 0.5rem; padding-bottom: 0.5rem; }
+  .site-nav ul { flex-wrap: wrap; }
+  #sim-canvas { height: 300px; }
+}
 
 /* ---------- Sim panels (neuron sim heatmap + raster) ---------- */
 .sim-panels {

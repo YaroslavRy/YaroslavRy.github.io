@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Neuron Sim — Yaroslav Ry</title>
+<title>Neural Network Playground — Yaroslav Ry</title>
 <link rel="icon" href="../assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="../css/main.css" rel="stylesheet">
@@ -39,9 +39,8 @@
 <div class="project-head">
   <div class="wrap">
     <a class="back" href="../index.html">← back to specimens</a>
-    <h1>Neuron Sim</h1>
+    <h1>Neural Network Playground</h1>
     <div class="project-meta">
-      <span>Specimen 04</span>
       <span>WebGL · gl.POINTS</span>
       <span>Leaky integrate-and-fire · sparse connectivity</span>
     </div>
@@ -49,25 +48,10 @@
 </div>
 
 <section style="padding-top:var(--space-3);">
-  <div class="wrap">
-    <p class="project-notes">
-      Every point is a neuron: it leaks charge toward rest, occasionally
-      fires on its own, and — once it crosses threshold — kicks a set of
-      other neurons. In <strong>realistic mode</strong> those connections are
-      distance-based: nearby neurons are more likely to be linked, connection
-      strength decays with distance, and the signal takes longer to arrive
-      the farther it travels — you can watch this directly, each firing
-      neuron sends a small bright pulse traveling along a faint line to
-      every neuron it's about to affect, arriving exactly when the delay
-      says it will. <strong>Random mode</strong> is a control condition:
-      same neuron count, but every connection target is picked uniformly at
-      random anywhere in the population, delivered instantly, no visible
-      travel. Switch between them below and watch the raster and phase
-      portrait change shape.
-    </p>
-
+  <div class="wrap project-layout">
+    <div class="project-main">
     <div class="project-stage">
-      <canvas id="sim-canvas" style="height:440px;"></canvas>
+      <canvas id="sim-canvas"></canvas>
       <div class="project-controls">
         <div class="field-row">
           <label>Connectivity</label>
@@ -88,8 +72,28 @@
         </div>
         <div class="field-row">
           <label for="k-slider">Avg degree</label>
-          <input id="k-slider" type="range" min="2" max="30" step="1" value="12">
+          <input id="k-slider" type="range" min="2" max="24" step="1" value="12">
           <output id="k-out">12</output>
+        </div>
+        <div class="field-row">
+          <label for="tau-slider">Membrane τ (steps)</label>
+          <input id="tau-slider" type="range" min="2" max="100" step="0.1" value="16.7">
+          <output id="tau-out" for="tau-slider">16.7</output>
+        </div>
+        <div class="field-row">
+          <label for="threshold-slider">Spike threshold</label>
+          <input id="threshold-slider" type="range" min="0.2" max="2" step="0.05" value="1">
+          <output id="threshold-out" for="threshold-slider">1.00</output>
+        </div>
+        <div class="field-row">
+          <label for="refractory-slider">Refractory (steps)</label>
+          <input id="refractory-slider" type="range" min="0" max="30" step="1" value="6">
+          <output id="refractory-out" for="refractory-slider">6</output>
+        </div>
+        <div class="field-row">
+          <label for="strength-slider">Synaptic strength</label>
+          <input id="strength-slider" type="range" min="0" max="3" step="0.05" value="1">
+          <output id="strength-out" for="strength-slider">1.00</output>
         </div>
         <button class="btn primary" id="play-btn">Pause</button>
         <button class="btn" id="reset-btn">Reset</button>
@@ -111,70 +115,18 @@
       </div>
     </div>
 
-    <p class="project-notes" style="margin-top:var(--space-3); font-size:0.85rem;">
-      The phase portrait plots population spiking activity against its
-      rate of change, one dot per frame, with old dots fading — this is
-      what makes it possible to <em>see</em> the dynamics rather than just
-      the raw spikes. Distance-based connectivity tends to produce tighter,
-      more structured loops (local clusters syncing up); fully random
-      connectivity tends to look noisier and less organized, since there's
-      no spatial structure for activity to travel coherently through.
-      Scales to roughly 10,000+ neurons depending on your device's GPU —
-      rendering is a single WebGL draw call per frame regardless of count,
-      so the ceiling is mostly how much your hardware can push.
-    </p>
-
-    <div class="section-head" style="margin-top:var(--space-4); margin-bottom:var(--space-2);">
-      <div class="label">Model</div>
-      <h2 style="font-size:1.2rem;">How it actually works</h2>
     </div>
-
-    <p class="project-notes">
-      Each neuron is a <strong>leaky integrate-and-fire</strong> unit. Every
-      step its membrane potential relaxes toward rest, occasionally gets
-      nudged up by spontaneous noise, and if it crosses threshold it fires,
-      resets, and sits in a brief refractory period:
-    </p>
-    <p style="text-align:center; margin:var(--space-2) 0; color:var(--text);">
-      $$ V_i(t{+}1) = V_i(t) + \alpha \left( V_{rest} - V_i(t) \right) + I_i(t) $$
-    </p>
-    <p class="project-notes" style="font-size:0.85rem;">
-      where $V_i$ is neuron $i$'s potential, $\alpha$ is the leak rate, and
-      $I_i(t)$ is any incoming signal arriving this step. A spike fires when
-      $V_i \geq V_{th}$, after which $V_i \to V_{rest}$ and the neuron
-      ignores input for $T_{ref}$ steps.
-    </p>
-
-    <p class="project-notes" style="margin-top:var(--space-3);">
-      In <strong>realistic mode</strong>, both the odds of a connection
-      existing and its strength fall off with distance $d_{ij}$ between two
-      neurons — closer neurons are more likely to be wired together, and
-      more strongly:
-    </p>
-    <p style="text-align:center; margin:var(--space-2) 0; color:var(--text);">
-      $$ P(i \to j) = e^{-d_{ij}/\lambda} \qquad\qquad w_{ij} = w_0 \cdot \operatorname{sign}(i) \cdot e^{-d_{ij}/\lambda} $$
-    </p>
-    <p class="project-notes" style="margin-top:var(--space-3);">
-      Signals also don't arrive instantly — they travel at an effective
-      fixed speed, so delay scales with distance too:
-    </p>
-    <p style="text-align:center; margin:var(--space-2) 0; color:var(--text);">
-      $$ \Delta t_{ij} = \left\lceil \dfrac{d_{ij}}{r_{max}} \cdot D_{max} \right\rceil $$
-    </p>
-    <p class="project-notes" style="font-size:0.85rem;">
-      $\lambda$ is the decay length, $r_{max}$ the local search radius, and
-      $D_{max}$ the maximum delay in steps. Pure locality like this,
-      though, only lets activity ripple outward through nearest neighbors —
-      it can never sync distant parts of the network, which isn't how real
-      cortex works. So ~18% of each neuron's connections deliberately skip
-      the radius and link to a random distant neuron instead — a sparse
-      long-range layer on top of the dense local one, the same
-      small-world mix (dense local wiring + sparse long-distance
-      projections) real cortical connectivity has. Those edges use a wider
-      decay length and a longer delay cap, which is why you'll see the
-      occasional pulse travel slowly clear across the canvas instead of
-      only ever hopping to its immediate neighbors.
-    </p>
+    <aside class="project-description">
+      <h2>Model</h2>
+      <p class="project-notes">Leaky integrate-and-fire neurons with excitatory and inhibitory connections. Bright points mark spikes; moving pulses show delayed signals.</p>
+      <p class="project-notes"><strong>Distance:</strong> mostly local connections plus sparse long-range links. <strong>Random:</strong> uniformly sampled targets with immediate delivery.</p>
+      <p>$$ V_i(t+1) = V_i(t) - V_i(t)/\tau + I_i(t) $$</p>
+      <p class="project-notes">τ controls how slowly voltage leaks toward zero. At threshold, a neuron spikes, resets to zero, and ignores input during its refractory period. Synaptic strength multiplies each transmitted connection weight.</p>
+      <p class="project-notes">Time is measured in simulation steps (one per animation frame), not biological milliseconds. Spontaneity is the probability of a voltage kick per neuron per step.</p>
+      <h2>Readouts</h2>
+      <p class="project-notes">Heatmap: recent spikes by position. Raster: spikes from a sampled subset of neurons over time. Phase portrait: population activity versus its change per step.</p>
+      <p class="project-notes">Parameter sliders affect ongoing activity. Connectivity, neuron count, and degree regenerate the network; Reset starts a fresh random network with the current settings.</p>
+    </aside>
   </div>
 </section>
 
@@ -222,6 +174,19 @@
     kOut.textContent = kSlider.value;
   });
   kSlider.addEventListener('input', () => { kOut.textContent = kSlider.value; });
+
+  for (const [name, setter, digits] of [
+    ['tau', 'setTau', 1], ['threshold', 'setThreshold', 2],
+    ['refractory', 'setRefractory', 0], ['strength', 'setStrength', 2],
+  ]) {
+    const slider = document.getElementById(`${name}-slider`);
+    const output = document.getElementById(`${name}-out`);
+    slider.addEventListener('input', () => {
+      const value = Number(slider.value);
+      NeuronSim[setter](value);
+      output.textContent = value.toFixed(digits);
+    });
+  }
 
   const playBtn = document.getElementById('play-btn');
   playBtn.addEventListener('click', () => {

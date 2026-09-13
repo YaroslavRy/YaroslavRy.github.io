@@ -31,7 +31,6 @@
     <a class="back" href="../../index.html">← back to specimens</a>
     <h1>Minefield</h1>
     <div class="project-meta">
-      <span>Specimen 02</span>
       <span>Canvas 2D + jQuery</span>
       <span>2D convolution</span>
     </div>
@@ -39,7 +38,16 @@
 </div>
 
 <section style="padding-top:var(--space-3);">
-  <div class="wrap">
+  <div class="wrap project-layout">
+    <div class="project-main">
+    <div class="project-stage minefield-stage">
+      <canvas id="canvas"></canvas>
+      <div class="project-controls">
+        <button class="btn primary" onclick="restartMinefield()">New game</button>
+      </div>
+    </div>
+    </div>
+    <aside class="project-description">
     <p class="project-notes">
       A minesweeper variant: mines are scattered on a grid, and instead of
       counting each cell's neighbors with nested loops one at a time, the
@@ -47,13 +55,7 @@
       convolution against a 3×3 kernel. Click a cell to reveal it — hit a
       mine and the round ends.
     </p>
-
-    <div class="project-stage">
-      <canvas id="canvas"></canvas>
-      <div class="project-controls">
-        <button class="btn primary" onclick="restartMinefield()">New game</button>
-      </div>
-    </div>
+    </aside>
   </div>
 </section>
 

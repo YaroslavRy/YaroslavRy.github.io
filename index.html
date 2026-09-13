@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Yaroslav Ry — Specimen Lab</title>
-<meta name="description" content="A lab notebook of computational experiments — cellular automata, neuron simulations, and small physics sketches.">
+<meta name="description" content="Glyph animation, Minefield, and a neural network playground.">
 <link rel="icon" href="assets/favicon.ico">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -35,29 +35,8 @@
   </div>
 </nav>
 
-<header class="hero">
-  <canvas data-matrix-bg></canvas>
-  <div class="hero-inner wrap">
-    <div class="label">Lab notebook — computational experiments</div>
-    <h1>Small simulations,<br>watched closely.</h1>
-    <p class="lede">
-      I build tiny worlds out of rules — cells that live and die, particles
-      that collide, neurons that fire. Day job is AI/ML and neuroscience;
-      this is where that interest gets to play. Longer writing lives on the
-      <a href="https://corvie.ai" target="_blank" rel="noopener">blog</a>.
-    </p>
-    <div class="hero-scroll-cue">↓ scroll for the specimen catalog</div>
-  </div>
-</header>
-
 <section id="specimens">
   <div class="wrap">
-    <div class="section-head">
-      <div class="label">Catalog</div>
-      <h2>Specimens</h2>
-      <p>Each card runs a live, simplified version of the real simulation. Open one to see the full version.</p>
-    </div>
-
     <div class="specimen-grid">
 
       <div class="specimen">
@@ -66,10 +45,9 @@
             <canvas data-preview="cellular-automaton"></canvas>
           </div>
           <div class="specimen-body">
-            <div class="label">Specimen 01</div>
-            <h3>Cellular Automaton</h3>
-            <p>A grid of glyphs that mutate on every frame — the site's original "work in progress" screen, now a proper piece.</p>
-            <span class="specimen-link">Open specimen</span>
+            <h3>Glyph Animation</h3>
+            <p>Random glyphs with fading trails.</p>
+            <span class="specimen-link">Open</span>
           </div>
         </a>
       </div>
@@ -80,24 +58,9 @@
             <canvas data-preview="minefield"></canvas>
           </div>
           <div class="specimen-body">
-            <div class="label">Specimen 02</div>
             <h3>Minefield</h3>
             <p>A minesweeper variant where neighbor counts are computed with 2D convolution instead of manual loops. Click a cell to reveal it.</p>
-            <span class="specimen-link">Open specimen</span>
-          </div>
-        </a>
-      </div>
-
-      <div class="specimen">
-        <a href="projects/bouncing-balls/index.html">
-          <div class="specimen-preview">
-            <canvas data-preview="bouncing-balls"></canvas>
-          </div>
-          <div class="specimen-body">
-            <div class="label">Specimen 03</div>
-            <h3>Bouncing Balls</h3>
-            <p>A small elastic-collision sandbox — mostly an excuse to play with velocity and restitution.</p>
-            <span class="specimen-link">Open specimen</span>
+            <span class="specimen-link">Open</span>
           </div>
         </a>
       </div>
@@ -108,10 +71,9 @@
             <canvas data-preview="neuron-sim"></canvas>
           </div>
           <div class="specimen-body">
-            <div class="label">Specimen 04</div>
-            <h3>Neuron Sim</h3>
+            <h3>Neural Network Playground</h3>
             <p>A network of simulated neurons with excitatory/inhibitory connections, spiking in real time.</p>
-            <span class="specimen-link">Open specimen</span>
+            <span class="specimen-link">Open</span>
           </div>
         </a>
       </div>
@@ -141,7 +103,6 @@
   </div>
 </footer>
 
-<script src="js/matrix-bg.js"></script>
 <script src="js/previews.js"></script>
 </body>
 </html>

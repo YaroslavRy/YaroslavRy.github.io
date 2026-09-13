@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cellular Automaton — Yaroslav Ry</title>
+<title>Glyph Animation — Yaroslav Ry</title>
 <link rel="icon" href="../../assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="../../css/main.css" rel="stylesheet">
@@ -28,9 +28,8 @@
 <div class="project-head">
   <div class="wrap">
     <a class="back" href="../../index.html">← back to specimens</a>
-    <h1>Cellular Automaton</h1>
+    <h1>Glyph Animation</h1>
     <div class="project-meta">
-      <span>Specimen 01</span>
       <span>Canvas 2D + jQuery</span>
       <span>Original site's homepage, restored</span>
     </div>
@@ -38,14 +37,8 @@
 </div>
 
 <section style="padding-top:var(--space-3);">
-  <div class="wrap">
-    <p class="project-notes">
-      A grid of random glyphs, redrawn every frame with a translucent fill
-      layered underneath — the trailing effect comes purely from not fully
-      clearing the canvas each pass. This was the site's original
-      "work in progress" placeholder; it's kept here as its own piece.
-    </p>
-
+  <div class="wrap project-layout">
+    <div class="project-main">
     <div class="project-stage">
       <canvas id="canvas"></canvas>
       <div class="project-controls">
@@ -59,6 +52,10 @@
         </label>
       </div>
     </div>
+    </div>
+    <aside class="project-description">
+    <p class="project-notes">Random glyphs with fading trails. Adjust glyph spacing or toggle the title overlay.</p>
+    </aside>
   </div>
 </section>
 

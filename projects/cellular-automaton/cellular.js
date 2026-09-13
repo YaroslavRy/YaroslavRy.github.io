@@ -31,7 +31,7 @@ $(async function () {
     if (window.showLabel) {
       let opacity = getRandomInt(100) / 100;
       ctx.fillStyle = `rgba(237, 227, 236, ${opacity})`;
-      let text = 'cellular automaton';
+      let text = 'glyph animation';
       ctx.font = '2.2em "Space Grotesk", sans-serif';
       ctx.textAlign = 'center';
       let rndShift = getRandomInt(6);

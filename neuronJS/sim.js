@@ -40,7 +40,8 @@
   const MAX_DELAY_STEPS = 8;       // local (within-radius) connections
   const MAX_LONG_DELAY_STEPS = 22; // long-range connections travel farther, so take longer
   const LONG_RANGE_FRACTION = 0.18; // ~18% of a neuron's edges ignore the local radius entirely
-  const REST = 0, THRESHOLD = 1, SPIKE_VALUE = 1.2, DECAY = 0.06, REFRACTORY_STEPS = 6;
+  const REST = 0, SPIKE_VALUE = 1.2;
+  let tau = 16.7, threshold = 1, refractorySteps = 6, strength = 1;
 
   let potential, glow, refractory, type, positions;
   let edgeTarget, edgeWeight, edgeDelay; // flattened [N * K_MAX]
@@ -236,14 +237,14 @@
         glow[i] *= 0.85;
         continue;
       }
-      potential[i] += (REST - potential[i]) * DECAY;
+      potential[i] += (REST - potential[i]) / tau;
       if (Math.random() < noise) potential[i] += 0.6;
 
-      if (potential[i] >= THRESHOLD) {
+      if (potential[i] >= threshold) {
         lastSpikeIndices.push(i);
         spikedFlags[i] = 1;
         glow[i] = 1;
-        refractory[i] = REFRACTORY_STEPS;
+        refractory[i] = refractorySteps;
         potential[i] = REST;
       } else {
         glow[i] *= 0.9;
@@ -256,7 +257,7 @@
       for (let e = 0; e < K_MAX; e++) {
         const j = edgeTarget[base + e];
         if (j < 0) break;
-        const w = edgeWeight[base + e];
+        const w = edgeWeight[base + e] * strength;
         const d = edgeDelay[base + e];
         if (d === 0) {
           if (refractory[j] === 0) potential[j] += w;
@@ -424,11 +425,9 @@
 
   function resizeGL() {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = canvas.parentElement.getBoundingClientRect();
+    const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * dpr;
     canvas.height = rect.height * dpr;
-    canvas.style.width = rect.width + 'px';
-    canvas.style.height = rect.height + 'px';
     gl.viewport(0, 0, canvas.width, canvas.height);
   }
 
@@ -583,7 +582,11 @@
     window.NeuronSim = {
       setCount(n) { setNeuronCount(Math.max(10, Math.min(12000, Math.round(n)))); },
       setNoise(v) { noise = v; },
-      setDegree(k) { targetDegree = Math.max(2, Math.min(30, Math.round(k))); setNeuronCount(N); },
+      setTau(v) { if (Number.isFinite(v)) tau = Math.max(2, Math.min(100, v)); },
+      setThreshold(v) { if (Number.isFinite(v)) threshold = Math.max(0.2, Math.min(2, v)); },
+      setRefractory(v) { if (Number.isFinite(v)) refractorySteps = Math.max(0, Math.min(30, Math.round(v))); },
+      setStrength(v) { if (Number.isFinite(v)) strength = Math.max(0, Math.min(3, v)); },
+      setDegree(k) { targetDegree = Math.max(2, Math.min(K_MAX, Math.round(k))); setNeuronCount(N); },
       setMode(m) { mode = m === 'random' ? 'random' : 'distance'; setNeuronCount(N); },
       getMode() { return mode; },
       togglePlay() { running = !running; return running; },
