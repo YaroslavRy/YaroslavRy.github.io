@@ -49,13 +49,22 @@
     </div>
     <aside class="project-description">
     <p class="project-notes">
+      I was once asked to describe how I would build a Minefield game in
+      JavaScript as a technical task. While thinking through the implementation,
+      I decided to calculate neighboring mine counts with a convolution:
+      represent mines as 1s and empty cells as 0s, then apply a fixed 3×3 kernel.
+      The kernel sums the eight neighbors and skips the cell itself.
+    </p>
+    <pre aria-label="Convolution kernel: ones around a zero center" style="color:var(--text);">1 1 1
+1 0 1
+1 1 1</pre>
+    <p class="project-notes">
       Clear all 170 safe cells on a 14×14 board with 26 mines.
       Click to reveal; your first click is safe. Numbers count adjacent
       mines, and empty regions open automatically. Hit a mine and you lose.
     </p>
     <p class="project-notes">
       Right-click to flag a suspected mine, or enable Flag mode and tap.
-      Neighbor counts use a 3×3 convolution with a zero at its center.
     </p>
     </aside>
   </div>
