@@ -1,0 +1,36 @@
+.convolution-layout { margin-top: var(--space-4); }
+.convolution-demo { min-width: 0; max-width: 500px; padding: 20px; border: 1px solid var(--line); background: var(--bg-deep); border-radius: var(--radius); }
+.convolution-demo h2 { font-size: 1.2rem; }
+.convolution-demo h3 { font-size: 0.78rem; line-height: 1.5; margin-bottom: 8px; }
+.convolution-demo h3 span { color: var(--accent); }
+.convolution-boards { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+.convolution-input { position: relative; }
+.convolution-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.convolution-grid > * { aspect-ratio: 1; min-width: 0; display: grid; place-items: center; padding: 0; font: 0.78rem var(--font-mono); }
+.convolution-grid button { border: 1px solid #5e2d6b; background: #30203f; color: var(--text); cursor: pointer; }
+.convolution-grid button:hover { border-color: var(--text); }
+.convolution-grid button:focus-visible { position: relative; z-index: 3; }
+.conv-padding { color: #8676a0; background: #2b1c38; border: 1px dashed #482e61; }
+.convolution-grid .is-mine { color: #f5a4cd; background: #61295a; }
+.convolution-grid .in-kernel { box-shadow: inset 0 0 0 1px #c24b86; }
+.convolution-grid .kernel-center { background: #482e61; outline: 1px dashed #ede3ec; outline-offset: -4px; }
+.convolution-grid .is-selected { background: #c24b86; color: #241531; font-weight: bold; }
+.kernel-window { position: absolute; width: calc(300% / 7); height: calc(300% / 7); border: 2px solid #ede3ec; pointer-events: none; transition: left 0.25s ease, top 0.25s ease; }
+.convolution-legend { font-size: 0.7rem; color: var(--text-muted); line-height: 1.6; }
+.convolution-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0; }
+.convolution-controls .btn { font-size: 0.7rem; padding: 8px; }
+.convolution-controls label { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; color: var(--text-muted); }
+.convolution-calculation { border-top: 1px solid var(--line); padding-top: 16px; }
+.convolution-products { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
+.convolution-products span { padding: 7px 2px; text-align: center; font: 0.75rem var(--font-mono); border: 1px solid var(--line); color: var(--text-muted); }
+.convolution-products .term-mine { background: #61295a; color: #ede3ec; }
+.convolution-products .term-center { border: 1px dashed #ede3ec; }
+.convolution-products .term-padding { border-style: dashed; color: #8676a0; }
+.convolution-sum { font: 0.78rem/1.8 var(--font-mono); color: var(--text); overflow-wrap: anywhere; margin-bottom: 0; }
+.convolution-kernel { color: var(--text); line-height: 1.7; }
+@media (max-width: 480px) {
+  .convolution-demo { padding: 12px; }
+  .convolution-boards { grid-template-columns: 1fr; gap: 18px; }
+  .convolution-grid > * { font-size: 0.85rem; }
+}
+@media (prefers-reduced-motion: reduce) { .kernel-window { transition: none; } }

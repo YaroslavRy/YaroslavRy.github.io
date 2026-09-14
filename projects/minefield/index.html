@@ -7,6 +7,7 @@
 <link rel="icon" href="../../assets/favicon.ico">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="../../css/main.css" rel="stylesheet">
+<link href="convolution.css" rel="stylesheet">
 </head>
 <body>
 
@@ -55,9 +56,6 @@
       represent mines as 1s and empty cells as 0s, then apply a fixed 3×3 kernel.
       The kernel sums the eight neighbors and skips the cell itself.
     </p>
-    <pre aria-label="Convolution kernel: ones around a zero center" style="color:var(--text);">1 1 1
-1 0 1
-1 1 1</pre>
     <p class="project-notes">
       Clear all 170 safe cells on a 14×14 board with 26 mines.
       Click to reveal; your first click is safe. Numbers count adjacent
@@ -66,6 +64,51 @@
     <p class="project-notes">
       Right-click to flag a suspected mine, or enable Flag mode and tap.
     </p>
+    </aside>
+  </div>
+  <div class="wrap project-layout convolution-layout">
+    <div class="convolution-demo" id="convolution-demo">
+      <h2>Try the kernel</h2>
+      <div class="convolution-boards">
+        <div>
+          <h3>Mine map <span>M</span></h3>
+          <div class="convolution-input">
+            <div id="conv-input" class="convolution-grid" role="group" aria-label="Example mine map"></div>
+            <div id="conv-window" class="kernel-window" aria-hidden="true"></div>
+          </div>
+        </div>
+        <div>
+          <h3>Neighbor counts <span>C</span></h3>
+          <div id="conv-output" class="convolution-grid" role="group" aria-label="Example neighbor counts"></div>
+        </div>
+      </div>
+      <p class="convolution-legend">1 = mine · 0 = empty · faded border = zero padding</p>
+      <div class="convolution-controls">
+        <button class="btn primary" id="conv-play" aria-pressed="false">Scan board</button>
+        <button class="btn" id="conv-step">Next cell</button>
+        <button class="btn" id="conv-reset">Reset example</button>
+        <label><input type="checkbox" id="conv-edit"> Edit mines</label>
+      </div>
+      <div class="convolution-calculation">
+        <h3 id="conv-position">Cell (3, 3): input × kernel</h3>
+        <div id="conv-products" class="convolution-products" aria-label="Nine input times kernel products"></div>
+        <p id="conv-sum" class="convolution-sum" role="status" aria-live="polite" aria-atomic="true"></p>
+      </div>
+    </div>
+    <aside class="project-description">
+      <h2>One rule for every cell</h2>
+      <p>Choose a cell in either grid, or scan the board. The square slides over
+        the mine map; the highlighted output is the sum of its eight neighbors.</p>
+      <pre class="convolution-kernel" aria-label="Fixed kernel: ones around a zero center">    1 1 1
+K = 1 0 1
+    1 1 1</pre>
+      <p>The center weight is zero, so a cell never counts itself—even when it
+        contains a mine. Outside the board, the input is zero.</p>
+      <p><strong>C = M ∗ K</strong><br>Apply the same fixed kernel at each position
+        to build the count map used by Minefield.</p>
+      <p>Enable <strong>Edit mines</strong> and tap the mine map to change a 0
+        into a 1 or back again. Watch the neighboring counts update.</p>
+      <p>This is a separate 5×5 example. Editing it does not change your game.</p>
     </aside>
   </div>
 </section>
@@ -78,5 +121,6 @@
 </footer>
 
 <script src="game.js"></script>
+<script src="convolution.js"></script>
 </body>
 </html>

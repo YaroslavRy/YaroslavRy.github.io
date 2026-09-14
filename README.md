@@ -137,3 +137,18 @@ count oracle. The browser test uses seed 42 at 1440px/DPR 2 and 390px/DPR 3,
 blocks external resources, and plays through reveal, flag/unflag, loss,
 restart, and win using canvas events. Screenshots: `/tmp/minefield-1440.png`
 and `/tmp/minefield-390.png`. Production boards remain random.
+
+## Interactive convolution example — 2026-09-14
+
+Minefield now includes a separate editable 5×5 binary map. A sliding 3×3 kernel
+highlights the selected input patch and output count. Nine multiplication
+terms show center exclusion and zero padding explicitly. Scan, pause, step,
+select, edit, and reset controls do not change the hidden game board.
+The initial example is fixed for reproducibility; animation starts only on
+request and CSS movement respects reduced-motion preferences.
+
+Validation: `node tests/convolution.test.cjs` checks zero/one maps, every
+single-mine position on 5×5 and 14×14 boards, and agreement with the game model.
+`python3 tests/check_convolution.py` checks desktop/mobile selection, editing,
+keyboard controls, scan completion, pause, reset, and game isolation with
+external resources blocked. Existing seeded Minefield model tests also pass.
