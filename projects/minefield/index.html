@@ -55,6 +55,8 @@
       I decided to calculate neighboring mine counts with a convolution:
       represent mines as 1s and empty cells as 0s, then apply a fixed 3×3 kernel.
       The kernel sums the eight neighbors and skips the cell itself.
+      I use one cell of zero padding around the board so the count map
+      stays the same size as the minefield.
     </p>
     <p class="project-notes">
       Clear all 170 safe cells on a 14×14 board with 26 mines.
@@ -71,14 +73,14 @@
       <h2>Try the kernel</h2>
       <div class="convolution-boards">
         <div>
-          <h3>Mine map <span>M</span></h3>
+          <h3>Mine map <span>M · 5×5</span></h3>
           <div class="convolution-input">
             <div id="conv-input" class="convolution-grid" role="group" aria-label="Example mine map"></div>
             <div id="conv-window" class="kernel-window" aria-hidden="true"></div>
           </div>
         </div>
         <div>
-          <h3>Neighbor counts <span>C</span></h3>
+          <h3>Neighbor counts <span>C · 5×5</span></h3>
           <div id="conv-output" class="convolution-grid" role="group" aria-label="Example neighbor counts"></div>
         </div>
       </div>
@@ -104,6 +106,14 @@ K = 1 0 1
     1 1 1</pre>
       <p>The center weight is zero, so a cell never counts itself—even when it
         contains a mine. Outside the board, the input is zero.</p>
+      <h2>Padding preserves the size</h2>
+      <p>A 3×3 kernel with stride 1 needs one cell of zero padding on each
+        side to produce a count for every original cell, including edges
+        and corners. The padded border is not part of the playable board.</p>
+      <p><strong>5×5 input → 5×5 counts</strong><br>
+        Output width: (5 + 2×1 − 3) / 1 + 1 = 5.<br>
+        Without padding, the output would shrink to 3×3.
+        The same rule keeps the actual game at 14×14.</p>
       <p><strong>C = M ∗ K</strong><br>Apply the same fixed kernel at each position
         to build the count map used by Minefield.</p>
       <p>Enable <strong>Edit mines</strong> and tap the mine map to change a 0

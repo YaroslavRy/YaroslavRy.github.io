@@ -158,23 +158,24 @@ section { padding: var(--space-5) 0; }
 #specimens { padding: var(--space-3) 0; }
 
 /* ---------- Project detail page ---------- */
+h1 { font-size: clamp(1.3rem, 3vw, 1.6rem); margin-bottom: 0.5rem; }
 .project-head {
   border-bottom: 1px solid var(--line);
-  padding: var(--space-4) 0 var(--space-3);
+  padding: 12px 0;
 }
 .project-head .back {
   font-family: var(--font-mono);
-  font-size: 0.8rem;
+  font-size: 0.72rem;
   color: var(--text-faint);
 }
-.project-head h1 { margin-top: var(--space-2); }
+.project-head h1 { margin: 4px 0; }
 .project-meta {
   display: flex;
-  gap: var(--space-3);
+  gap: 4px 16px;
   flex-wrap: wrap;
-  margin-top: var(--space-2);
+  margin-top: 4px;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.7rem;
   color: var(--text-faint);
 }
 .project-stage {
