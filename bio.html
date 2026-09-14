@@ -69,26 +69,42 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-work">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-scan"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Oct 2025 — present</span><span class="career-kind">Experience</span></div>
-                <h4>SPD.TECH</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-1">
+                  <div class="career-meta"><span class="career-date">Oct 2025 — present</span><span class="career-kind">Experience</span></div>
+                <h4 id="career-title-1">SPD.TECH</h4>
                 <p class="career-role">Freelance Senior ML Engineer</p>
-                <p class="career-description">Built a skin analysis platform from model selection and annotation
-          to production deployment. Trained a SegFormer segmentation model,
-          coordinated annotators, and developed severity estimation. Deployed on
-          AWS and used ONNX Runtime to achieve a 2.18× CPU inference speedup.</p>
-              </article>
+                  <p class="career-description">Skin segmentation, severity estimation, and production deployment.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Evaluated segmentation architectures including MANet and SegFormer, then trained a SegFormer-based multilabel model for skin conditions.</li>
+                    <li>Coordinated a dedicated annotation team to build ground-truth labels for model training.</li>
+                    <li>Migrated the inference pipeline to AWS SageMaker using a proxy architecture and ONNX Runtime, achieving a 2.18× CPU inference speedup.</li>
+                    <li>Developed severity estimation with logistic S-curves and automated deployment using ECS and AWS Secrets Manager.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-work">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-pose"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jan — Apr 2025</span><span class="career-kind">Experience</span></div>
-                <h4>Samsung R&amp;D Institute Ukraine</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-2">
+                  <div class="career-meta"><span class="career-date">Jan — Apr 2025</span><span class="career-kind">Experience</span></div>
+                <h4 id="career-title-2">Samsung R&amp;D Institute Ukraine</h4>
                 <p class="career-role">Machine Learning Researcher</p>
-                <p class="career-description">Researched sensor fusion, human pose estimation, and human–computer
-          interaction using IMU, biometric, and visual data. Developed synthetic
-          pose datasets with Blender and Python.</p>
-              </article>
+                  <p class="career-description">Multimodal sensing and human pose estimation.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Researched sensor fusion and human–computer interaction using IMU, biometric signals, and computer vision.</li>
+                    <li>Worked on deep learning architectures for human pose estimation and real-time signal analysis.</li>
+                    <li>Used Blender and Python to generate synthetic datasets for pose estimation.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
@@ -97,65 +113,116 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-project">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-bot"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Aug 2023 · inactive</span><span class="career-kind">Project</span></div>
-                <h4>SciBot</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-3">
+                  <div class="career-meta"><span class="career-date">Aug 2023 · inactive</span><span class="career-kind">Project</span></div>
+                <h4 id="career-title-3">SciBot</h4>
                 <p class="career-role">Personal project · NLP / RAG</p>
-                <p class="career-description">A Telegram bot for topic-based neuroscience paper alerts and
-          summaries, using LangGraph and retrieval-augmented generation.
-          Currently inactive.</p>
-              </article>
+                  <p class="career-description">Neuroscience paper alerts and summaries in Telegram.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Built topic subscriptions to track newly published neuroscience articles.</li>
+                    <li>Implemented a paper summarization pipeline using language models and retrieval-augmented generation.</li>
+                    <li>Designed the architecture around LangGraph, external knowledge retrieval, and semantic graph technologies. The bot is currently inactive.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-research">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-brain"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jul 2023 — Feb 2024</span><span class="career-kind">Research</span></div>
-                <h4>Taras Shevchenko National University of Kyiv</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-4">
+                  <div class="career-meta"><span class="career-date">Jul 2023 — Feb 2024</span><span class="career-kind">Research</span></div>
+                <h4 id="career-title-4">Taras Shevchenko National University of Kyiv</h4>
                 <p class="career-role">Research collaborator · EEG analysis</p>
-                <p class="career-description">Developed an EEG analysis framework to study cognitive and emotional
-          dynamics before and after the onset of hostilities.</p>
-              </article>
+                  <p class="career-description">EEG analysis for neuroscience research.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Collaborated with the Institute of Biology and Medicine on an EEG data analysis framework.</li>
+                    <li>The research examined cognitive and emotional dynamics in wartime, comparing periods before and after the onset of hostilities.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-project">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-image"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jul — Sep 2023</span><span class="career-kind">Project</span></div>
-                <h4>AMO Media</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-5">
+                  <div class="career-meta"><span class="career-date">Jul — Sep 2023</span><span class="career-kind">Project</span></div>
+                <h4 id="career-title-5">AMO Media</h4>
                 <p class="career-role">Project work · generative vision</p>
-                <p class="career-description">Researched a proof of concept for automated cartoon generation using Stable Diffusion and related techniques.</p>
-              </article>
+                  <p class="career-description">A proof of concept for automated cartoon generation.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Researched Stable Diffusion models and related techniques for generating cartoon content.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-volunteer">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-rover"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jun 2023 — Mar 2024</span><span class="career-kind">Volunteer</span></div>
-                <h4>Robotics</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-6">
+                  <div class="career-meta"><span class="career-date">Jun 2023 — Mar 2024</span><span class="career-kind">Volunteer</span></div>
+                <h4 id="career-title-6">Robotics</h4>
                 <p class="career-role">Volunteer project · ML / robotics</p>
-                <p class="career-description">Led a small team developing an autonomous vehicle system with ROS,
-          Gazebo, and ArduPilot. Integrated IMU and GPS data and tested the
-          system in simulation and on a physical vehicle.</p>
-              </article>
+                  <p class="career-description">An autonomous vehicle system, from simulation to physical tests.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Led a small team and designed the system architecture using ROS, Gazebo, and ArduPilot software-in-the-loop simulation.</li>
+                    <li>Implemented basic target following and real-time telemetry processing, integrating IMU and GPS data.</li>
+                    <li>Mentored a teammate and validated the system in simulation before testing it on a physical autonomous vehicle.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-project">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-document"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jun 2023</span><span class="career-kind">Project</span></div>
-                <h4>HelpMeTender</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-7">
+                  <div class="career-meta"><span class="career-date">Jun 2023</span><span class="career-kind">Project</span></div>
+                <h4 id="career-title-7">HelpMeTender</h4>
                 <p class="career-role">Proof of concept · document retrieval</p>
-                <p class="career-description">A proof of concept for tender document analysis, combining Prozorro
-          data, semantic retrieval, reranking, and information extraction.</p>
-              </article>
+                  <p class="career-description">Retrieval and information extraction for tender documents.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Built a proof-of-concept web system for documents under the Government Procurement Agreement.</li>
+                    <li>Integrated the Prozorro API to retrieve and process tender data.</li>
+                    <li>Combined semantic embeddings, vector search, and reranking to identify relevant clauses, with LangGraph for the agent workflow.</li>
+                    <li>Developed extraction and summarization modules and evaluated retrieval with recall and expert review.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-work">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-camera"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jan 2023 — Dec 2024</span><span class="career-kind">Experience</span></div>
-                <h4>Computer vision research · NDA</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-8">
+                  <div class="career-meta"><span class="career-date">Jan 2023 — Dec 2024</span><span class="career-kind">Experience</span></div>
+                <h4 id="career-title-8">Computer vision research · NDA</h4>
                 <p class="career-role">ML Researcher / Team Lead</p>
-                <p class="career-description">Led work on object detection with YOLO and RT-DETR, annotation tools,
-          and training workflows on AWS. Researched temporal detection methods
-          and applied digital signal processing to magnetic sensor data.</p>
-              </article>
+                  <p class="career-description">Object detection pipelines and magnetic signal analysis.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Built object detection pipelines using YOLO, RT-DETR, and OpenCV, alongside internal annotation tools.</li>
+                    <li>Managed preprocessing, model training, evaluation, and deployment workflows on AWS.</li>
+                    <li>Led the team and researched detection methods using objects’ temporal characteristics.</li>
+                    <li>Applied digital signal processing to magnetic sensor data for feature extraction and analysis.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
@@ -164,34 +231,60 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-research">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-microscope"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Oct 2022 — Aug 2023</span><span class="career-kind">Research</span></div>
-                <h4>Wellcome Sanger Institute &amp; IMBG</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-9">
+                  <div class="career-meta"><span class="career-date">Oct 2022 — Aug 2023</span><span class="career-kind">Research</span></div>
+                <h4 id="career-title-9">Wellcome Sanger Institute &amp; IMBG</h4>
                 <p class="career-role">Research collaborator · ML / team lead</p>
-                <p class="career-description">Led a multidisciplinary team developing computer vision tools for
-          buccal cell recognition in cancer research. Integrated microscopy
-          data with OMERO and related cell morphology to clinical data.</p>
-              </article>
+                  <p class="career-description">Computer vision for microscopy in cancer research.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Developed a library for automated recognition of buccal swab cells, relating cell morphology to patient clinical data.</li>
+                    <li>Led a multidisciplinary team through project planning, algorithm design, and validation across datasets.</li>
+                    <li>Integrated image data with OMERO to manage and retrieve microscopy datasets for downstream analysis.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-project">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-wave"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Jun — Aug 2022</span><span class="career-kind">Project</span></div>
-                <h4>Mental health platform · NDA</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-10">
+                  <div class="career-meta"><span class="career-date">Jun — Aug 2022</span><span class="career-kind">Project</span></div>
+                <h4 id="career-title-10">Mental health platform · NDA</h4>
                 <p class="career-role">Project work · speech and language</p>
-                <p class="career-description">Built an assistant that transcribed audio from videos and summarized sessions for therapists and clients.</p>
-              </article>
+                  <p class="career-description">Speech transcription and session summaries.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Developed an NLP and language-model assistant for a mental health platform.</li>
+                    <li>Processed audio from videos, transcribed speech, and generated summaries and key notes for therapists and clients.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
             <li class="timeline-entry track-volunteer">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-pin"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">2022</span><span class="career-kind">Volunteer</span></div>
-                <h4>Mariupol Status Bot</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-11">
+                  <div class="career-meta"><span class="career-date">2022</span><span class="career-kind">Volunteer</span></div>
+                <h4 id="career-title-11">Mariupol Status Bot</h4>
                 <p class="career-role">Volunteer project · humanitarian updates</p>
-                <p class="career-description">Built with a small volunteer team to deliver location-based
-          humanitarian updates. The pipeline combined Telegram data, OCR,
-          entity extraction, and geocoding.</p>
-              </article>
+                  <p class="career-description">Location-based humanitarian updates for civilians.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Worked with a small volunteer team to build a Telegram bot during the early invasion.</li>
+                    <li>Let subscribers filter updates by street, district, or a custom radius.</li>
+                    <li>Parsed public Telegram messages and images, using OCR to read screenshots.</li>
+                    <li>Combined named-entity recognition and regular expressions to identify locations, events, and resources, then geocoded the results for local updates.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
@@ -200,12 +293,20 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-project">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-chat"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Nov — Dec 2021</span><span class="career-kind">Project</span></div>
-                <h4>Outrun.gg</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-12">
+                  <div class="career-meta"><span class="career-date">Nov — Dec 2021</span><span class="career-kind">Project</span></div>
+                <h4 id="career-title-12">Outrun.gg</h4>
                 <p class="career-role">Project work · NLP</p>
-                <p class="career-description">Developed a paraphrasing service using language models.</p>
-              </article>
+                  <p class="career-description">Language-model paraphrasing for an esports media platform.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Developed a paraphrasing service using NLP techniques and language models during a short project engagement.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
@@ -214,12 +315,21 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-project">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-wave"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Dec 2020 — Feb 2021</span><span class="career-kind">Project</span></div>
-                <h4>Tangibly</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-13">
+                  <div class="career-meta"><span class="career-date">Dec 2020 — Feb 2021</span><span class="career-kind">Project</span></div>
+                <h4 id="career-title-13">Tangibly</h4>
                 <p class="career-role">Project work · audio ML</p>
-                <p class="career-description">Developed a speaker diarization service using convolutional networks over audio spectrograms, with PyTorch and TensorFlow.</p>
-              </article>
+                  <p class="career-description">Speaker diarization from audio spectrograms.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Developed a machine learning service for identifying speakers over time in audio.</li>
+                    <li>Used convolutional neural networks over spectrograms, with PyTorch and TensorFlow.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
@@ -228,15 +338,24 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-work">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-controller"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Feb 2018 — Aug 2021</span><span class="career-kind">Experience</span></div>
-                <h4>GG.BET</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-14">
+                  <div class="career-meta"><span class="career-date">Feb 2018 — Aug 2021</span><span class="career-kind">Experience</span></div>
+                <h4 id="career-title-14">GG.BET</h4>
                 <p class="career-role">ML Engineer / Researcher / Data Scientist</p>
-                <p class="career-description">Built document verification, statistical models, and streaming data
-          pipelines. Developed a CNN to recognize more than 40 weapon types in
-          esports livestreams and a multimodal network for live Dota 2 outcome
-          prediction. Deployed models in Go.</p>
-              </article>
+                  <p class="career-description">Production ML for documents, esports streams, and live predictions.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Built an end-to-end document verification service using computer vision and textual data validation.</li>
+                    <li>Worked on statistical modeling, from linear regression to custom neural architectures, with production deployments in Go.</li>
+                    <li>Built parsing services for high-throughput streaming and data ingestion.</li>
+                    <li>Trained a CNN to classify more than 40 weapon types in real time from Twitch esports streams.</li>
+                    <li>Developed a live Dota 2 outcome prediction network combining convolutional features and embeddings.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
@@ -245,13 +364,22 @@
           <ol class="timeline-entries">
             <li class="timeline-entry track-work">
               <span class="timeline-icon" aria-hidden="true"><svg viewBox="0 0 16 16" focusable="false"><use href="#pixel-chart"/></svg></span>
-              <article class="career-card">
-                <div class="career-meta"><span class="career-date">Aug 2016 — Dec 2017</span><span class="career-kind">Experience</span></div>
-                <h4>LeBoutique</h4>
+              <details class="career-card">
+                <summary aria-labelledby="career-title-15">
+                  <div class="career-meta"><span class="career-date">Aug 2016 — Dec 2017</span><span class="career-kind">Experience</span></div>
+                <h4 id="career-title-15">LeBoutique</h4>
                 <p class="career-role">Data Scientist / Web Analyst</p>
-                <p class="career-description">Developed recommendation and churn prediction systems, regression
-          models, and automated marketing reports using Python.</p>
-              </article>
+                  <p class="career-description">Recommendations, customer modeling, and marketing analytics.</p>
+                  <span class="career-toggle" aria-hidden="true"><span class="when-closed">More info</span><span class="when-open">Less info</span><span class="toggle-mark"></span></span>
+                </summary>
+                <div class="career-expanded">
+                  <ul>
+                    <li>Developed recommender systems using collaborative filtering and association rules.</li>
+                    <li>Built regression models and customer churn analysis pipelines.</li>
+                    <li>Automated marketing reports, data collection, and preprocessing in Python.</li>
+                  </ul>
+                </div>
+              </details>
             </li>
           </ol>
         </section>
