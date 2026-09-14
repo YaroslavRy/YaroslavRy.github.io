@@ -1,0 +1,52 @@
+/* Career timeline. Pictograms use hand-drawn 16×16 SVG pixel grids. */
+.pixel-symbols { position: absolute; width: 0; height: 0; overflow: hidden; }
+.bio-timeline-layout { grid-template-columns: minmax(0, 1fr) 250px; gap: 36px; }
+.career-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; }
+.career-heading h2 { margin: 0; font-size: 1.4rem; }
+.career-heading p { margin: 0; color: var(--text-muted); font-size: 0.75rem; }
+.track-work { --track-color: #d97aa7; }
+.track-research { --track-color: #b4a0dc; }
+.track-project { --track-color: #a9b6ca; }
+.track-volunteer { --track-color: #d4b38e; }
+.career-legend { display: flex; flex-wrap: wrap; gap: 12px 20px; margin: 16px 0 32px; }
+.career-legend span { display: inline-flex; align-items: center; gap: 8px; font: 0.7rem var(--font-mono); color: var(--text-muted); }
+.career-legend i { width: 6px; height: 6px; background: var(--track-color); }
+.timeline { position: relative; }
+.timeline::before { content: ''; position: absolute; left: 23px; top: 15px; bottom: 22px; width: 2px; background: #71517e; }
+.timeline-year { position: relative; padding: 0 0 24px; scroll-margin-top: 80px; }
+.timeline-year:last-child { padding-bottom: 0; }
+.year-marker { position: relative; display: flex; align-items: center; gap: 22px; margin: 0 0 20px; font: 500 0.95rem var(--font-mono); color: var(--text); }
+.year-marker::before { content: ''; margin-left: 18px; width: 12px; height: 12px; background: var(--text); border: 3px solid var(--bg-base); box-shadow: 0 0 0 1px #71517e; }
+.timeline-entries { list-style: none; margin: 0; padding: 0; }
+.timeline-entry { position: relative; padding-left: 72px; margin-bottom: 20px; }
+.timeline-entry::before { content: ''; position: absolute; top: 27px; left: 46px; width: 26px; height: 2px; background: #71517e; }
+.timeline-icon { position: absolute; left: 0; top: 4px; width: 48px; height: 48px; display: grid; place-items: center; background: var(--bg-deep); border: 1px solid var(--track-color); color: var(--track-color); box-shadow: 0 0 0 4px var(--bg-base); }
+.timeline-icon svg { width: 32px; height: 32px; fill: currentColor; shape-rendering: crispEdges; }
+.career-card { min-width: 0; padding: 18px 20px; background: rgba(36, 21, 49, 0.3); border: 1px solid #654674; border-left: 2px solid var(--track-color); }
+.career-meta { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; margin-bottom: 10px; font: 0.65rem/1.6 var(--font-mono); }
+.career-date { color: var(--text-muted); }
+.career-kind { color: var(--track-color); }
+.career-card h4 { font-size: 1.05rem; line-height: 1.4; margin: 0 0 5px; }
+.career-role { color: var(--track-color); font-size: 0.75rem; margin: 0 0 12px; }
+.career-description { color: var(--text-muted); font-size: 0.86rem; line-height: 1.75; margin: 0; }
+.bio-sidebar { padding-left: 24px; border-left: 1px solid #654674; }
+.bio-sidebar h2 { font-size: 0.95rem; }
+.bio-sidebar p { font-size: 0.82rem; }
+@media (max-width: 850px) {
+  .bio-timeline-layout { grid-template-columns: minmax(0, 1fr); }
+  .bio-sidebar { margin-left: 72px; padding-left: 20px; }
+}
+@media (max-width: 480px) {
+  .bio-timeline-layout { padding-left: 16px; padding-right: 16px; }
+  .timeline::before { left: 17px; }
+  .timeline-entry { padding-left: 50px; }
+  .timeline-entry::before { left: 34px; width: 16px; top: 23px; }
+  .timeline-icon { width: 36px; height: 40px; }
+  .timeline-icon svg { width: 32px; height: 32px; }
+  .year-marker::before { margin-left: 12px; }
+  .year-marker { gap: 26px; }
+  .career-card { padding: 14px 12px; }
+  .career-card h4 { font-size: 0.98rem; }
+  .career-meta { font-size: 0.63rem; }
+  .bio-sidebar { margin-left: 50px; }
+}
